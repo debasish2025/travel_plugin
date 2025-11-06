@@ -873,6 +873,273 @@
 
 
 /* ========================================
+   HORIZONTAL TABS ITINERARY - MODERN DESIGN
+   ======================================== */
+
+.stp-itinerary-section-tabs {
+    margin: 50px 0;
+}
+
+.stp-section-title-modern {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 30px 0;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #667eea;
+}
+
+.stp-tabs-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.stp-tab-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 0;
+    gap: 0;
+}
+
+.stp-tab-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 18px 25px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+.stp-tab-btn:last-child {
+    border-right: none;
+}
+
+.stp-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.stp-tab-btn.active {
+    background: #fff;
+    color: #667eea;
+}
+
+.stp-tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #667eea;
+}
+
+.stp-tab-content-wrapper {
+    padding: 35px;
+    min-height: 300px;
+}
+
+.stp-tab-panel {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.stp-tab-panel.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stp-tab-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 20px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stp-tab-content {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #444;
+}
+
+.stp-tab-content ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 15px 0;
+}
+
+.stp-tab-content ul li {
+    padding-left: 30px;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.stp-tab-content ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.stp-tab-content strong {
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.stp-tab-content em {
+    color: #667eea;
+}
+
+/* ========================================
+   COMPACT FEATURES SECTION
+   ======================================== */
+
+.stp-features-compact {
+    margin: 40px 0;
+    padding: 30px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border-left: 5px solid #667eea;
+}
+
+.stp-features-heading {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 20px 0;
+}
+
+.stp-features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.stp-feature-item {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stp-feature-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #495057;
+    min-width: 120px;
+}
+
+.stp-feature-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: transform 0.2s ease;
+}
+
+.stp-feature-badge:hover {
+    transform: scale(1.05);
+}
+
+/* Difficulty colors */
+.stp-diff-easy,
+.stp-diff-beginner {
+    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+}
+
+.stp-diff-moderate,
+.stp-diff-intermediate {
+    background: linear-gradient(135deg, #ff9800 0%, #ffa726 100%);
+}
+
+.stp-diff-hard,
+.stp-diff-difficult {
+    background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
+}
+
+.stp-diff-expert,
+.stp-diff-advanced {
+    background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%);
+}
+
+/* WhatsApp button hover */
+.whatsapp-cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5) !important;
+    background: linear-gradient(135deg, #128C7E 0%, #25D366 100%) !important;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+    .stp-tab-buttons {
+        flex-direction: column;
+    }
+
+    .stp-tab-btn {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stp-tab-btn:last-child {
+        border-bottom: none;
+    }
+
+    .stp-tab-content-wrapper {
+        padding: 25px 20px;
+        min-height: 250px;
+    }
+
+    .stp-tab-title {
+        font-size: 22px;
+    }
+
+    .stp-features-compact {
+        padding: 20px;
+    }
+
+    .stp-feature-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stp-feature-label {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* ========================================
    PACKAGE FEATURES SECTION - MODERN DESIGN
    ======================================== */
 

@@ -41,79 +41,51 @@ function stp_enqueue_admin_assets($hook) {
 function stp_tinymce_keyboard_shortcuts() {
     ?>
     <script type="text/javascript">
-    jQuery(document).ready(function($) {
-        // Ensure TinyMCE shortcuts work properly in visual mode
+    (function() {
+        if (typeof tinymce === 'undefined') return;
 
-        if (typeof tinymce !== 'undefined') {
-            // Hook into ALL editors being added
-            tinymce.on('AddEditor', function(e) {
-                var editor = e.editor;
+        tinymce.on('AddEditor', function(e) {
+            var editor = e.editor;
 
-                // Wait for editor to be fully initialized
-                editor.on('init', function() {
-                    console.log('✅ TinyMCE Editor Ready: ' + editor.id);
+            editor.on('init', function() {
+                var doc = editor.getDoc();
 
-                    // TinyMCE already has shortcuts, but we need to ensure they execute properly
-                    // Remove any existing shortcuts first to avoid conflicts
-                    editor.shortcuts.remove('ctrl+b');
-                    editor.shortcuts.remove('meta+b');
-                    editor.shortcuts.remove('ctrl+i');
-                    editor.shortcuts.remove('meta+i');
-                    editor.shortcuts.remove('ctrl+u');
-                    editor.shortcuts.remove('meta+u');
+                // Attach keydown listener directly to iframe document
+                jQuery(doc).on('keydown', function(event) {
+                    if (event.ctrlKey || event.metaKey) {
+                        var preventDefault = false;
 
-                    // Re-add shortcuts with proper command execution
-                    editor.shortcuts.add('ctrl+b', 'Bold text', function() {
-                        editor.execCommand('Bold');
-                        return false;
-                    });
-                    editor.shortcuts.add('meta+b', 'Bold text', function() {
-                        editor.execCommand('Bold');
-                        return false;
-                    });
-
-                    editor.shortcuts.add('ctrl+i', 'Italic text', function() {
-                        editor.execCommand('Italic');
-                        return false;
-                    });
-                    editor.shortcuts.add('meta+i', 'Italic text', function() {
-                        editor.execCommand('Italic');
-                        return false;
-                    });
-
-                    editor.shortcuts.add('ctrl+u', 'Underline text', function() {
-                        editor.execCommand('Underline');
-                        return false;
-                    });
-                    editor.shortcuts.add('meta+u', 'Underline text', function() {
-                        editor.execCommand('Underline');
-                        return false;
-                    });
-
-                    editor.shortcuts.add('ctrl+k', 'Insert link', function() {
-                        editor.execCommand('mceLink');
-                        return false;
-                    });
-                    editor.shortcuts.add('meta+k', 'Insert link', function() {
-                        editor.execCommand('mceLink');
-                        return false;
-                    });
-
-                    console.log('⚡ Keyboard shortcuts properly configured for: ' + editor.id);
-                    console.log('✅ Try: Ctrl+B (Bold), Ctrl+I (Italic), Ctrl+U (Underline), Ctrl+K (Link)');
-
-                    // Add visual feedback when shortcuts are used
-                    editor.on('ExecCommand', function(e) {
-                        if (['Bold', 'Italic', 'Underline', 'mceLink'].indexOf(e.command) !== -1) {
-                            console.log('✨ Executed: ' + e.command);
+                        switch(event.which) {
+                            case 66: // B
+                                editor.execCommand('Bold');
+                                preventDefault = true;
+                                break;
+                            case 73: // I
+                                editor.execCommand('Italic');
+                                preventDefault = true;
+                                break;
+                            case 85: // U
+                                editor.execCommand('Underline');
+                                preventDefault = true;
+                                break;
+                            case 75: // K
+                                editor.execCommand('mceLink');
+                                preventDefault = true;
+                                break;
                         }
-                    });
+
+                        if (preventDefault) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            return false;
+                        }
+                    }
                 });
+
+                console.log('✅ Shortcuts active for: ' + editor.id);
             });
-        } else {
-            console.error('❌ TinyMCE is not available');
-        }
-    });
+        });
+    })();
     </script>
     <?php
 }
