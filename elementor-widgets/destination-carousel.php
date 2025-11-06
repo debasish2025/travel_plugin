@@ -123,7 +123,8 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
         ));
 
         $options = array('all' => 'All Categories');
-        if (!is_wp_error($categories)) {
+
+        if (!is_wp_error($categories) && !empty($categories)) {
             foreach ($categories as $cat) {
                 $options[$cat->slug] = $cat->name;
             }

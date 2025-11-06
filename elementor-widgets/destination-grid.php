@@ -122,12 +122,15 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
             'taxonomy' => 'package_category',
             'hide_empty' => false,
         ));
-        
+
         $options = array('all' => 'All Categories');
-        foreach ($categories as $cat) {
-            $options[$cat->slug] = $cat->name;
+
+        if (!is_wp_error($categories) && !empty($categories)) {
+            foreach ($categories as $cat) {
+                $options[$cat->slug] = $cat->name;
+            }
         }
-        
+
         return $options;
     }
     
