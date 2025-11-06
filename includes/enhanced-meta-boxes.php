@@ -23,187 +23,546 @@ function stp_add_enhanced_itinerary_metabox() {
 
 function stp_render_enhanced_itinerary($post) {
     wp_nonce_field('package_itinerary_enhanced_nonce', 'package_itinerary_enhanced_nonce');
-    
-    // Get existing itinerary (SAFE: Reads existing data)
+
+    // Get existing itinerary
     $itinerary = get_post_meta($post->ID, '_itinerary', true);
     if (!is_array($itinerary)) $itinerary = array();
-    
+
     // If empty, add one default day
     if (empty($itinerary)) {
         $itinerary = array(
             array('title' => '', 'activities' => '')
         );
     }
-    
+
     ?>
-    <div id="itinerary-container-enhanced">
-        <?php foreach ($itinerary as $i => $day): ?>
-            <div class="itinerary-day-enhanced" data-day="<?php echo $i; ?>" style="border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; background: #f9f9f9; border-radius: 5px;">
-                <h3 style="margin-top: 0; color: #23282d;">
-                    📍 Day <?php echo $i + 1; ?>
-                    <button type="button" class="button remove-day-enhanced" style="float: right; background: #dc3232; color: white; border-color: #dc3232;">
-                        <span class="dashicons dashicons-trash" style="vertical-align: middle;"></span> Remove Day
-                    </button>
-                    <div style="clear: both;"></div>
-                </h3>
-                
-                <p>
-                    <label style="font-weight: 600; display: block; margin-bottom: 5px;">Day Title:</label>
-                    <input type="text" 
-                           name="itinerary[<?php echo $i; ?>][title]" 
-                           value="<?php echo esc_attr($day['title']); ?>" 
-                           class="widefat" 
-                           placeholder="e.g., Arrival & Temple Trail"
-                           style="padding: 8px; font-size: 14px;">
-                </p>
-                
-                <p>
-                    <label style="font-weight: 600; display: block; margin-bottom: 5px;">Activities & Details:</label>
-                    <?php
-                    // Create unique editor ID
-                    $editor_id = 'itinerary_activities_' . $i;
-                    $content = isset($day['activities']) ? $day['activities'] : '';
-                    
-                    // If old format with pipes, convert to list
-                    if (strpos($content, '|') !== false && strpos($content, '<') === false) {
-                        $activities = explode('|', $content);
-                        $content = '<ul>';
-                        foreach ($activities as $activity) {
-                            $activity = trim($activity);
-                            if (!empty($activity)) {
-                                $content .= '<li>' . esc_html($activity) . '</li>';
-                            }
-                        }
-                        $content .= '</ul>';
-                    }
-                    
-                    // Rich text editor settings
-                    $editor_settings = array(
-                        'textarea_name' => 'itinerary[' . $i . '][activities]',
-                        'textarea_rows' => 8,
-                        'media_buttons' => false, // No media upload
-                        'teeny' => false, // Full editor
-                        'tinymce' => array(
-                            'toolbar1' => 'bold,italic,underline,|,bullist,numlist,|,link,unlink,|,undo,redo',
-                            'toolbar2' => '',
-                        ),
-                        'quicktags' => array(
-                            'buttons' => 'strong,em,ul,ol,li,link'
-                        )
-                    );
-                    
-                    wp_editor($content, $editor_id, $editor_settings);
-                    ?>
-                    <span class="description" style="display: block; margin-top: 5px;">
-                        ✨ Use the editor toolbar to format your text with <strong>bold</strong>, <em>italic</em>, bullet points, and links
-                    </span>
-                </p>
+    <div class="stp-modern-admin-wrapper">
+        <div class="stp-admin-header">
+            <div class="stp-header-content">
+                <h3>✈️ Day by Day Itinerary Builder</h3>
+                <p>Create a beautiful timeline itinerary for your travel package</p>
             </div>
-        <?php endforeach; ?>
+            <button type="button" id="add-day-enhanced" class="stp-btn-primary">
+                <span class="dashicons dashicons-plus"></span> Add New Day
+            </button>
+        </div>
+
+        <div id="itinerary-container-enhanced" class="stp-accordion-container">
+            <?php foreach ($itinerary as $i => $day): ?>
+                <div class="stp-accordion-item" data-day="<?php echo $i; ?>">
+                    <div class="stp-accordion-header">
+                        <div class="stp-day-indicator">
+                            <span class="stp-day-num"><?php echo $i + 1; ?></span>
+                        </div>
+                        <div class="stp-day-title-preview">
+                            <strong>Day <?php echo $i + 1; ?></strong>
+                            <span class="stp-title-text"><?php echo esc_html($day['title']) ?: 'Click to edit'; ?></span>
+                        </div>
+                        <div class="stp-accordion-actions">
+                            <button type="button" class="stp-btn-toggle">
+                                <span class="dashicons dashicons-arrow-down-alt2"></span>
+                            </button>
+                            <button type="button" class="stp-btn-remove remove-day-enhanced">
+                                <span class="dashicons dashicons-trash"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stp-accordion-body">
+                        <div class="stp-form-group">
+                            <label class="stp-label">
+                                <span class="stp-label-icon">📝</span> Day Title
+                            </label>
+                            <input type="text"
+                                   name="itinerary[<?php echo $i; ?>][title]"
+                                   value="<?php echo esc_attr($day['title']); ?>"
+                                   class="stp-input-title"
+                                   placeholder="e.g., Arrival & City Exploration">
+                        </div>
+
+                        <div class="stp-form-group">
+                            <label class="stp-label">
+                                <span class="stp-label-icon">📋</span> Activities & Details
+                                <span class="stp-label-hint">Use Ctrl+B for bold, Ctrl+I for italic</span>
+                            </label>
+                            <?php
+                            $editor_id = 'itinerary_activities_' . $i;
+                            $content = isset($day['activities']) ? $day['activities'] : '';
+
+                            // Convert old pipe format to list
+                            if (strpos($content, '|') !== false && strpos($content, '<') === false) {
+                                $activities = explode('|', $content);
+                                $content = '<ul>';
+                                foreach ($activities as $activity) {
+                                    $activity = trim($activity);
+                                    if (!empty($activity)) {
+                                        $content .= '<li>' . esc_html($activity) . '</li>';
+                                    }
+                                }
+                                $content .= '</ul>';
+                            }
+
+                            $editor_settings = array(
+                                'textarea_name' => 'itinerary[' . $i . '][activities]',
+                                'textarea_rows' => 10,
+                                'media_buttons' => false,
+                                'teeny' => false,
+                                'tinymce' => array(
+                                    'toolbar1' => 'formatselect | bold italic underline | bullist numlist | link | removeformat',
+                                    'toolbar2' => '',
+                                    'block_formats' => 'Paragraph=p;Heading=h4',
+                                ),
+                                'quicktags' => array(
+                                    'buttons' => 'strong,em,ul,ol,li,link'
+                                )
+                            );
+
+                            wp_editor($content, $editor_id, $editor_settings);
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="stp-admin-footer">
+            <button type="button" id="add-day-enhanced-bottom" class="stp-btn-secondary">
+                <span class="dashicons dashicons-plus"></span> Add Another Day
+            </button>
+            <div class="stp-footer-info">
+                <span class="dashicons dashicons-info"></span>
+                <strong>Tip:</strong> Click on any day to expand and edit. Use keyboard shortcuts in the editor for faster formatting.
+            </div>
+        </div>
     </div>
-    
-    <p>
-        <button type="button" id="add-day-enhanced" class="button button-primary button-large">
-            <span class="dashicons dashicons-plus-alt" style="vertical-align: middle;"></span>
-            Add Another Day
-        </button>
-    </p>
     
     <script>
     jQuery(document).ready(function($) {
         var dayCount = <?php echo count($itinerary); ?>;
-        
-        // Add new day
-        $('#add-day-enhanced').on('click', function() {
+
+        // Accordion toggle
+        $(document).on('click', '.stp-btn-toggle', function(e) {
+            e.preventDefault();
+            var $item = $(this).closest('.stp-accordion-item');
+            var $body = $item.find('.stp-accordion-body');
+            var $icon = $(this).find('.dashicons');
+
+            if ($body.is(':visible')) {
+                $body.slideUp(300);
+                $icon.removeClass('dashicons-arrow-up-alt2').addClass('dashicons-arrow-down-alt2');
+                $item.removeClass('active');
+            } else {
+                $body.slideDown(300);
+                $icon.removeClass('dashicons-arrow-down-alt2').addClass('dashicons-arrow-up-alt2');
+                $item.addClass('active');
+            }
+        });
+
+        // Add new day (both buttons)
+        $('#add-day-enhanced, #add-day-enhanced-bottom').on('click', function() {
             dayCount++;
-            var newDay = $('<div class="itinerary-day-enhanced" data-day="' + dayCount + '" style="border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; background: #f9f9f9; border-radius: 5px;"></div>');
-            
-            var dayHtml = '<h3 style="margin-top: 0; color: #23282d;">' +
-                '📍 Day ' + dayCount + 
-                '<button type="button" class="button remove-day-enhanced" style="float: right; background: #dc3232; color: white; border-color: #dc3232;">' +
-                '<span class="dashicons dashicons-trash" style="vertical-align: middle;"></span> Remove Day' +
+            var newIndex = dayCount - 1;
+
+            var newDay = $('<div class="stp-accordion-item" data-day="' + newIndex + '"></div>');
+
+            var dayHtml = '<div class="stp-accordion-header">' +
+                '<div class="stp-day-indicator"><span class="stp-day-num">' + dayCount + '</span></div>' +
+                '<div class="stp-day-title-preview">' +
+                '<strong>Day ' + dayCount + '</strong>' +
+                '<span class="stp-title-text">Click to edit</span>' +
+                '</div>' +
+                '<div class="stp-accordion-actions">' +
+                '<button type="button" class="stp-btn-toggle">' +
+                '<span class="dashicons dashicons-arrow-down-alt2"></span>' +
                 '</button>' +
-                '<div style="clear: both;"></div>' +
-                '</h3>' +
-                '<p>' +
-                '<label style="font-weight: 600; display: block; margin-bottom: 5px;">Day Title:</label>' +
-                '<input type="text" name="itinerary[' + (dayCount - 1) + '][title]" value="" class="widefat" placeholder="e.g., Arrival & Temple Trail" style="padding: 8px; font-size: 14px;">' +
-                '</p>' +
-                '<p>' +
-                '<label style="font-weight: 600; display: block; margin-bottom: 5px;">Activities & Details:</label>' +
-                '<textarea name="itinerary[' + (dayCount - 1) + '][activities]" rows="8" class="widefat" style="font-family: monospace;" placeholder="Enter activities for this day..."></textarea>' +
-                '<span class="description" style="display: block; margin-top: 5px;">Note: Rich text editor will be available after saving this day</span>' +
-                '</p>';
-            
+                '<button type="button" class="stp-btn-remove remove-day-enhanced">' +
+                '<span class="dashicons dashicons-trash"></span>' +
+                '</button>' +
+                '</div>' +
+                '</div>' +
+                '<div class="stp-accordion-body" style="display:none;">' +
+                '<div class="stp-form-group">' +
+                '<label class="stp-label"><span class="stp-label-icon">📝</span> Day Title</label>' +
+                '<input type="text" name="itinerary[' + newIndex + '][title]" value="" class="stp-input-title" placeholder="e.g., Arrival & City Exploration">' +
+                '</div>' +
+                '<div class="stp-form-group">' +
+                '<label class="stp-label"><span class="stp-label-icon">📋</span> Activities & Details</label>' +
+                '<textarea name="itinerary[' + newIndex + '][activities]" rows="10" class="stp-textarea" placeholder="Enter activities for this day..."></textarea>' +
+                '<p class="stp-note">💡 Rich text editor will be available after saving</p>' +
+                '</div>' +
+                '</div>';
+
             newDay.html(dayHtml);
             $('#itinerary-container-enhanced').append(newDay);
-            
+
+            // Auto-expand new day
+            newDay.find('.stp-btn-toggle').click();
+
             // Scroll to new day
             $('html, body').animate({
-                scrollTop: newDay.offset().top - 50
+                scrollTop: newDay.offset().top - 100
             }, 500);
         });
-        
+
+        // Update title preview on input
+        $(document).on('input', '.stp-input-title', function() {
+            var title = $(this).val() || 'Click to edit';
+            $(this).closest('.stp-accordion-item').find('.stp-title-text').text(title);
+        });
+
         // Remove day
-        $(document).on('click', '.remove-day-enhanced', function() {
-            if ($('.itinerary-day-enhanced').length <= 1) {
-                alert('You must have at least one day in the itinerary.');
+        $(document).on('click', '.remove-day-enhanced', function(e) {
+            e.preventDefault();
+
+            if ($('.stp-accordion-item').length <= 1) {
+                alert('⚠️ You must have at least one day in the itinerary.');
                 return;
             }
-            
-            if (confirm('Are you sure you want to remove this day?')) {
-                $(this).closest('.itinerary-day-enhanced').fadeOut(300, function() {
+
+            if (confirm('🗑️ Are you sure you want to remove this day?')) {
+                var $item = $(this).closest('.stp-accordion-item');
+
+                $item.fadeOut(300, function() {
                     $(this).remove();
-                    // Renumber days
-                    $('.itinerary-day-enhanced').each(function(i) {
+
+                    // Renumber all days
+                    $('.stp-accordion-item').each(function(i) {
                         $(this).attr('data-day', i);
-                        $(this).find('h3').first().html(
-                            '📍 Day ' + (i + 1) + 
-                            '<button type="button" class="button remove-day-enhanced" style="float: right; background: #dc3232; color: white; border-color: #dc3232;">' +
-                            '<span class="dashicons dashicons-trash" style="vertical-align: middle;"></span> Remove Day' +
-                            '</button>' +
-                            '<div style="clear: both;"></div>'
-                        );
-                        
+                        $(this).find('.stp-day-num').text(i + 1);
+                        $(this).find('.stp-day-title-preview strong').text('Day ' + (i + 1));
+
                         // Update input names
                         $(this).find('input[type="text"]').attr('name', 'itinerary[' + i + '][title]');
                         $(this).find('textarea').attr('name', 'itinerary[' + i + '][activities]');
                     });
-                    dayCount = $('.itinerary-day-enhanced').length;
+
+                    dayCount = $('.stp-accordion-item').length;
                 });
+            }
+        });
+
+        // Collapse all initially except first
+        $('.stp-accordion-item').each(function(i) {
+            if (i > 0) {
+                $(this).find('.stp-accordion-body').hide();
+            } else {
+                $(this).addClass('active');
+                $(this).find('.stp-btn-toggle .dashicons')
+                    .removeClass('dashicons-arrow-down-alt2')
+                    .addClass('dashicons-arrow-up-alt2');
             }
         });
     });
     </script>
     
     <style>
-    .itinerary-day-enhanced {
-        position: relative;
+    /* Modern Admin Wrapper */
+    .stp-modern-admin-wrapper {
+        background: #f8f9fa;
+        padding: 25px;
+        margin: -6px -12px -12px;
+        border-radius: 8px;
+    }
+
+    /* Header */
+    .stp-admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, #0073aa 0%, #00a0d2 100%);
+        padding: 25px 30px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0, 115, 170, 0.2);
+    }
+    .stp-header-content h3 {
+        color: #fff;
+        font-size: 24px;
+        margin: 0 0 5px 0;
+        font-weight: 600;
+    }
+    .stp-header-content p {
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+        font-size: 14px;
+    }
+
+    /* Buttons */
+    .stp-btn-primary {
+        background: #fff;
+        color: #0073aa;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .stp-btn-primary:hover {
+        background: #f0f0f0;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .stp-btn-secondary {
+        background: #0073aa;
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         transition: all 0.3s ease;
     }
-    .itinerary-day-enhanced:hover {
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    .stp-btn-secondary:hover {
+        background: #005a87;
     }
-    .itinerary-day-enhanced .mce-tinymce {
-        margin-top: 5px;
-        border-radius: 3px;
+
+    /* Accordion Container */
+    .stp-accordion-container {
+        margin-bottom: 20px;
     }
-    .itinerary-day-enhanced h3 {
-        border-bottom: 2px solid #0073aa;
-        padding-bottom: 10px;
+
+    /* Accordion Item */
+    .stp-accordion-item {
+        background: #fff;
+        border-radius: 8px;
         margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        overflow: hidden;
     }
-    .remove-day-enhanced:hover {
-        background: #a00 !important;
-        border-color: #a00 !important;
+    .stp-accordion-item:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     }
+    .stp-accordion-item.active {
+        box-shadow: 0 4px 20px rgba(0, 115, 170, 0.15);
+    }
+
+    /* Accordion Header */
+    .stp-accordion-header {
+        display: flex;
+        align-items: center;
+        padding: 20px 25px;
+        cursor: pointer;
+        background: #fff;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    .stp-accordion-item.active .stp-accordion-header {
+        background: #f8f9fa;
+        border-bottom-color: #0073aa;
+    }
+
+    /* Day Indicator */
+    .stp-day-indicator {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #0073aa, #00a0d2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        flex-shrink: 0;
+        box-shadow: 0 2px 10px rgba(0, 115, 170, 0.3);
+    }
+    .stp-day-num {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    /* Day Title Preview */
+    .stp-day-title-preview {
+        flex: 1;
+    }
+    .stp-day-title-preview strong {
+        display: block;
+        font-size: 12px;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+    .stp-title-text {
+        font-size: 16px;
+        color: #333;
+        font-weight: 500;
+    }
+
+    /* Accordion Actions */
+    .stp-accordion-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .stp-btn-toggle, .stp-btn-remove {
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        background: #f0f0f0;
+    }
+    .stp-btn-toggle:hover {
+        background: #0073aa;
+        color: #fff;
+    }
+    .stp-btn-toggle:hover .dashicons {
+        color: #fff;
+    }
+    .stp-btn-remove {
+        background: #fef0f0;
+        color: #dc3232;
+    }
+    .stp-btn-remove:hover {
+        background: #dc3232;
+        color: #fff;
+    }
+    .stp-btn-remove:hover .dashicons {
+        color: #fff;
+    }
+
+    /* Accordion Body */
+    .stp-accordion-body {
+        padding: 0 25px 25px 25px;
+        background: #fafafa;
+    }
+
+    /* Form Groups */
+    .stp-form-group {
+        margin-bottom: 25px;
+    }
+    .stp-form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Labels */
+    .stp-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    .stp-label-icon {
+        font-size: 16px;
+    }
+    .stp-label-hint {
+        margin-left: auto;
+        font-weight: 400;
+        font-size: 12px;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* Inputs */
+    .stp-input-title {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        background: #fff;
+    }
+    .stp-input-title:focus {
+        outline: none;
+        border-color: #0073aa;
+        box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.1);
+    }
+
+    /* Textarea */
+    .stp-textarea {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        transition: all 0.3s ease;
+        background: #fff;
+        resize: vertical;
+    }
+    .stp-textarea:focus {
+        outline: none;
+        border-color: #0073aa;
+        box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.1);
+    }
+
+    /* TinyMCE Styling */
+    .stp-accordion-body .mce-tinymce {
+        border-radius: 6px;
+        border: 2px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+    .stp-accordion-body .mce-tinymce:focus-within {
+        border-color: #0073aa;
+        box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.1);
+    }
+
+    /* Note */
+    .stp-note {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #666;
+        font-style: italic;
+    }
+
+    /* Footer */
+    .stp-admin-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .stp-footer-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #666;
+    }
+    .stp-footer-info .dashicons {
+        color: #0073aa;
+    }
+
+    /* Dashicons */
     .dashicons {
         line-height: inherit;
-    }
-    #add-day-enhanced {
-        font-size: 14px;
-        padding: 8px 15px;
+        width: auto;
         height: auto;
+        font-size: 18px;
+    }
+
+    /* Responsive */
+    @media (max-width: 782px) {
+        .stp-admin-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .stp-admin-footer {
+            flex-direction: column;
+            gap: 15px;
+        }
     }
     </style>
     <?php
