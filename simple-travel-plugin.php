@@ -50,6 +50,7 @@ class Simple_Travel_Plugin {
         require_once STP_PATH . 'includes/csv-import.php'; // New powerful CSV importer with HTML support
         require_once STP_PATH . 'includes/enhanced-meta-boxes.php';
         require_once STP_PATH . 'includes/whatsapp-social-related.php';
+        require_once STP_PATH . 'includes/quick-image-upload.php'; // Quick image upload from list page
     }
     
     public function register_post_type() {
