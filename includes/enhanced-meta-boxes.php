@@ -40,37 +40,50 @@ function stp_enqueue_admin_assets($hook) {
 
 function stp_tinymce_keyboard_shortcuts() {
     ?>
-    <script>
-    (function() {
-        // Wait for TinyMCE to be ready
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        // TinyMCE has built-in shortcuts, but we need to ensure they're active
+
         if (typeof tinymce !== 'undefined') {
+            // Hook into ALL editors being added
             tinymce.on('AddEditor', function(e) {
                 var editor = e.editor;
+
+                // Wait for editor to be fully initialized
                 editor.on('init', function() {
-                    console.log('TinyMCE Editor initialized: ' + editor.id);
+                    console.log('✅ TinyMCE Editor Ready: ' + editor.id);
 
-                    // Add keyboard shortcuts that ACTUALLY work
-                    editor.shortcuts.add('ctrl+b', 'Bold text', function() {
-                        editor.execCommand('Bold');
+                    // Force enable shortcuts (they should work by default, but let's make sure)
+                    editor.shortcuts.add('ctrl+b', 'Bold', 'Bold');
+                    editor.shortcuts.add('meta+b', 'Bold', 'Bold'); // Mac
+
+                    editor.shortcuts.add('ctrl+i', 'Italic', 'Italic');
+                    editor.shortcuts.add('meta+i', 'Italic', 'Italic'); // Mac
+
+                    editor.shortcuts.add('ctrl+u', 'Underline', 'Underline');
+                    editor.shortcuts.add('meta+u', 'Underline', 'Underline'); // Mac
+
+                    editor.shortcuts.add('ctrl+k', 'Link', 'mceLink');
+                    editor.shortcuts.add('meta+k', 'Link', 'mceLink'); // Mac
+
+                    console.log('⚡ Keyboard shortcuts registered for: ' + editor.id);
+                    console.log('Try: Ctrl+B (Bold), Ctrl+I (Italic), Ctrl+U (Underline), Ctrl+K (Link)');
+
+                    // Test if shortcuts work
+                    editor.on('keydown', function(e) {
+                        if (e.ctrlKey || e.metaKey) {
+                            var key = String.fromCharCode(e.keyCode).toLowerCase();
+                            if (key === 'b' || key === 'i' || key === 'u' || key === 'k') {
+                                console.log('🎯 Shortcut pressed: Ctrl+' + key.toUpperCase());
+                            }
+                        }
                     });
-
-                    editor.shortcuts.add('ctrl+i', 'Italic text', function() {
-                        editor.execCommand('Italic');
-                    });
-
-                    editor.shortcuts.add('ctrl+u', 'Underline text', function() {
-                        editor.execCommand('Underline');
-                    });
-
-                    editor.shortcuts.add('ctrl+k', 'Insert link', function() {
-                        editor.execCommand('mceLink');
-                    });
-
-                    console.log('Keyboard shortcuts registered for: ' + editor.id);
                 });
             });
+        } else {
+            console.error('❌ TinyMCE is not available');
         }
-    })();
+    });
     </script>
     <?php
 }
@@ -175,19 +188,19 @@ function stp_render_enhanced_itinerary($post) {
                                 'textarea_rows' => 10,
                                 'media_buttons' => false,
                                 'teeny' => false,
+                                'wpautop' => true,
                                 'tinymce' => array(
                                     'toolbar1' => 'formatselect | bold italic underline strikethrough | forecolor backcolor | bullist numlist | link unlink | alignleft aligncenter alignright | undo redo | removeformat',
                                     'toolbar2' => '',
                                     'block_formats' => 'Paragraph=p;Heading 3=h3;Heading 4=h4',
-                                    'content_css' => false,
                                     'browser_spellcheck' => true,
                                     'paste_as_text' => false,
-                                    'setup' => 'function(editor) {
-                                        editor.on("init", function() {
-                                            // Keyboard shortcuts are registered globally in admin_footer
-                                            console.log("Editor ready: " + editor.id);
-                                        });
-                                    }'
+                                    'remove_linebreaks' => false,
+                                    'convert_newlines_to_brs' => false,
+                                    'force_br_newlines' => false,
+                                    'force_p_newlines' => true,
+                                    'remove_redundant_brs' => false,
+                                    'forced_root_block' => 'p',
                                 ),
                                 'quicktags' => array(
                                     'buttons' => 'strong,em,ul,ol,li,link,close'
@@ -197,7 +210,8 @@ function stp_render_enhanced_itinerary($post) {
                             wp_editor($content, $editor_id, $editor_settings);
                             ?>
                             <div class="stp-help-text">
-                                ⚡ <strong>Keyboard Shortcuts Work!</strong> Select text and press: <kbd>Ctrl+B</kbd> (Bold) • <kbd>Ctrl+I</kbd> (Italic) • <kbd>Ctrl+U</kbd> (Underline) • <kbd>Ctrl+K</kbd> (Link)
+                                ⚡ <strong>Keyboard Shortcuts:</strong> Click inside editor, then press: <kbd>Ctrl+B</kbd> (Bold) • <kbd>Ctrl+I</kbd> (Italic) • <kbd>Ctrl+U</kbd> (Underline) • <kbd>Ctrl+K</kbd> (Link)
+                                <br><small style="margin-top: 5px; display: block;">💡 Make sure you're in <strong>Visual</strong> mode (not Text mode) - check the tab above the editor</small>
                             </div>
                         </div>
                     </div>
