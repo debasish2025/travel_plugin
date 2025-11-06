@@ -115,7 +115,18 @@ while (have_posts()) : the_post();
                         </div>
                     </section>
                 <?php endif; ?>
-                
+
+                <!-- Elementor Content (if exists) -->
+                <?php
+                // Check if Elementor content exists
+                if (class_exists('\Elementor\Plugin')) {
+                    $elementor_data = get_post_meta(get_the_ID(), '_elementor_data', true);
+                    if ($elementor_data) {
+                        echo \Elementor\Plugin::instance()->frontend->get_builder_content_for_display(get_the_ID());
+                    }
+                }
+                ?>
+
                 <!-- Itinerary Section -->
                 <?php if (!empty($itinerary) && is_array($itinerary)): ?>
                     <section class="stp-itinerary-section">
@@ -123,7 +134,7 @@ while (have_posts()) : the_post();
                             <span class="stp-title-icon">📅</span>
                             Day by Day Itinerary
                         </h2>
-                        
+
                         <div class="stp-itinerary-timeline">
                             <?php foreach ($itinerary as $index => $day): ?>
                                 <div class="stp-itinerary-day-item">
@@ -131,7 +142,7 @@ while (have_posts()) : the_post();
                                         <span>Day</span>
                                         <strong><?php echo $index + 1; ?></strong>
                                     </div>
-                                    
+
                                     <div class="stp-day-content">
                                         <h3 class="stp-day-title"><?php echo esc_html($day['title']); ?></h3>
                                         <div class="stp-day-activities">
@@ -143,17 +154,6 @@ while (have_posts()) : the_post();
                         </div>
                     </section>
                 <?php endif; ?>
-                
-                <!-- Elementor Content (if exists) -->
-                <?php
-                // Check if Elementor content exists
-                if (class_exists('\Elementor\Plugin')) {
-                    $elementor_data = get_post_meta(get_the_ID(), '_elementor_data', true);
-                    if ($elementor_data) {
-                        echo \Elementor\Plugin::instance()->frontend->get_builder_content_for_display(get_the_ID());
-                    }
-                }
-                ?>
                 
             </div>
         </div>
