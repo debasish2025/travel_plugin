@@ -250,79 +250,82 @@ function stp_save_enhanced_itinerary($post_id, $post) {
     }
 }
 
-// Display formatted itinerary on frontend
-add_filter('the_content', 'stp_display_enhanced_itinerary', 20);
-
-function stp_display_enhanced_itinerary($content) {
-    if (!is_singular('travel_package')) {
-        return $content;
-    }
-    
-    global $post;
-    $itinerary = get_post_meta($post->ID, '_itinerary', true);
-    
-    if (empty($itinerary) || !is_array($itinerary)) {
-        return $content;
-    }
-    
-    ob_start();
-    ?>
-<div class="travel-itinerary-enhanced" style="margin: 30px 0; padding: 30px; background: #f8f9fa; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-        <h2 style="color: #0073aa; margin-top: 0; font-size: 28px; border-bottom: 3px solid #0073aa; padding-bottom: 15px; margin-bottom: 25px;">
-            📅 Detailed Itinerary
-        </h2>
-        
-        <?php foreach ($itinerary as $i => $day): ?>
-            <div class="itinerary-day-item" style="margin-bottom: 30px; padding: 25px; background: white; border-left: 4px solid #0073aa; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <h3 style="color: #333; font-size: 22px; margin-top: 0; margin-bottom: 15px;">
-                    <span style="display: inline-block; width: 35px; height: 35px; background: #0073aa; color: white; border-radius: 50%; text-align: center; line-height: 35px; margin-right: 10px; font-size: 16px;">
-                        <?php echo $i + 1; ?>
-                    </span>
-                    <?php echo esc_html($day['title']); ?>
-                </h3>
-                
-                <div class="itinerary-activities" style="color: #555; font-size: 15px; line-height: 1.8;">
-                    <?php echo wpautop($day['activities']); ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-    
-    <style>
-    .travel-itinerary-enhanced .itinerary-activities ul {
-        list-style: none;
-        padding-left: 0;
-        margin: 0;
-    }
-    .travel-itinerary-enhanced .itinerary-activities ul li {
-        padding-left: 30px;
-        position: relative;
-        margin-bottom: 10px;
-    }
-    .travel-itinerary-enhanced .itinerary-activities ul li:before {
-        content: "✓";
-        position: absolute;
-        left: 0;
-        color: #0073aa;
-        font-weight: bold;
-        font-size: 18px;
-    }
-    .travel-itinerary-enhanced .itinerary-activities a {
-        color: #0073aa;
-        text-decoration: none;
-        border-bottom: 1px dotted #0073aa;
-    }
-    .travel-itinerary-enhanced .itinerary-activities a:hover {
-        border-bottom-style: solid;
-    }
-    .itinerary-day-item:hover {
-        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-        transform: translateY(-2px);
-        transition: all 0.3s ease;
-    }
-    </style>
-    <?php
-    $itinerary_html = ob_get_clean();
-    
-    return $content . $itinerary_html;
-}
+// REMOVED: Duplicate "Detailed Itinerary" display
+// The itinerary is now only displayed in the template file (single-travel-package.php)
+// with the heading "Day by Day Itinerary"
+//
+// add_filter('the_content', 'stp_display_enhanced_itinerary', 20);
+//
+// function stp_display_enhanced_itinerary($content) {
+//     if (!is_singular('travel_package')) {
+//         return $content;
+//     }
+//
+//     global $post;
+//     $itinerary = get_post_meta($post->ID, '_itinerary', true);
+//
+//     if (empty($itinerary) || !is_array($itinerary)) {
+//         return $content;
+//     }
+//
+//     ob_start();
+//     ?>
+// <div class="travel-itinerary-enhanced" style="margin: 30px 0; padding: 30px; background: #f8f9fa; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+//         <h2 style="color: #0073aa; margin-top: 0; font-size: 28px; border-bottom: 3px solid #0073aa; padding-bottom: 15px; margin-bottom: 25px;">
+//             📅 Detailed Itinerary
+//         </h2>
+//
+//         <?php foreach ($itinerary as $i => $day): ?>
+//             <div class="itinerary-day-item" style="margin-bottom: 30px; padding: 25px; background: white; border-left: 4px solid #0073aa; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+//                 <h3 style="color: #333; font-size: 22px; margin-top: 0; margin-bottom: 15px;">
+//                     <span style="display: inline-block; width: 35px; height: 35px; background: #0073aa; color: white; border-radius: 50%; text-align: center; line-height: 35px; margin-right: 10px; font-size: 16px;">
+//                         <?php echo $i + 1; ?>
+//                     </span>
+//                     <?php echo esc_html($day['title']); ?>
+//                 </h3>
+//
+//                 <div class="itinerary-activities" style="color: #555; font-size: 15px; line-height: 1.8;">
+//                     <?php echo wpautop($day['activities']); ?>
+//                 </div>
+//             </div>
+//         <?php endforeach; ?>
+//     </div>
+//
+//     <style>
+//     .travel-itinerary-enhanced .itinerary-activities ul {
+//         list-style: none;
+//         padding-left: 0;
+//         margin: 0;
+//     }
+//     .travel-itinerary-enhanced .itinerary-activities ul li {
+//         padding-left: 30px;
+//         position: relative;
+//         margin-bottom: 10px;
+//     }
+//     .travel-itinerary-enhanced .itinerary-activities ul li:before {
+//         content: "✓";
+//         position: absolute;
+//         left: 0;
+//         color: #0073aa;
+//         font-weight: bold;
+//         font-size: 18px;
+//     }
+//     .travel-itinerary-enhanced .itinerary-activities a {
+//         color: #0073aa;
+//         text-decoration: none;
+//         border-bottom: 1px dotted #0073aa;
+//     }
+//     .travel-itinerary-enhanced .itinerary-activities a:hover {
+//         border-bottom-style: solid;
+//     }
+//     .itinerary-day-item:hover {
+//         box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+//         transform: translateY(-2px);
+//         transition: all 0.3s ease;
+//     }
+//     </style>
+//     <?php
+//     $itinerary_html = ob_get_clean();
+//
+//     return $content . $itinerary_html;
+// }
