@@ -1,7 +1,6 @@
 <?php
 /**
  * Single Travel Package Template
- * Ultra-modern professional design
  */
 
 get_header();
@@ -22,7 +21,6 @@ while (have_posts()) : the_post();
     <article id="post-<?php the_ID(); ?>" <?php post_class('stp-single-package'); ?>>
 
         <?php if ($template == 'default'): ?>
-            <!-- Template 1: Classic Hero -->
             <div class="stp-hero-section stp-hero-classic">
                 <?php if (has_post_thumbnail()): ?>
                     <div class="stp-hero-image">
@@ -30,7 +28,6 @@ while (have_posts()) : the_post();
                         <div class="stp-hero-overlay"></div>
                     </div>
                 <?php endif; ?>
-
                 <div class="stp-hero-content">
                     <div class="container">
                         <h1 class="stp-hero-title"><?php the_title(); ?></h1>
@@ -47,9 +44,7 @@ while (have_posts()) : the_post();
                     </div>
                 </div>
             </div>
-
         <?php elseif ($template == 'modern'): ?>
-            <!-- Template 2: Modern Split -->
             <div class="stp-hero-section stp-hero-modern">
                 <div class="container">
                     <div class="stp-modern-grid">
@@ -74,9 +69,7 @@ while (have_posts()) : the_post();
                     </div>
                 </div>
             </div>
-
         <?php else: ?>
-            <!-- Template 3: Full Width Hero -->
             <div class="stp-hero-section stp-hero-fullwidth">
                 <?php if (has_post_thumbnail()): ?>
                     <div class="stp-hero-image-full">
@@ -84,7 +77,6 @@ while (have_posts()) : the_post();
                         <div class="stp-hero-overlay-dark"></div>
                     </div>
                 <?php endif; ?>
-
                 <div class="stp-hero-content-centered">
                     <div class="container">
                         <h1 class="stp-hero-title-large"><?php the_title(); ?></h1>
@@ -103,7 +95,6 @@ while (have_posts()) : the_post();
             </div>
         <?php endif; ?>
 
-        <!-- Main Content Area -->
         <div class="stp-package-content">
             <div class="container">
 
@@ -112,15 +103,16 @@ while (have_posts()) : the_post();
                     <section class="stp-description-section">
                         <div class="stp-content-wrapper">
                             <?php
-                            // Remove WhatsApp filter temporarily
+                            // Remove all automatic filters
                             remove_filter('the_content', 'stp_add_whatsapp_cta', 25);
+                            remove_filter('the_content', 'stp_add_social_share', 30);
                             the_content();
                             ?>
                         </div>
                     </section>
                 <?php endif; ?>
 
-                <!-- Day by Day Itinerary - ULTRA MODERN TABS -->
+                <!-- Day by Day Itinerary -->
                 <?php if (!empty($itinerary) && is_array($itinerary)): ?>
                     <section class="stp-itinerary-modern">
                         <div class="stp-section-header">
@@ -134,7 +126,6 @@ while (have_posts()) : the_post();
                         </div>
 
                         <div class="stp-tabs-modern">
-                            <!-- Horizontal Tab Navigation -->
                             <div class="stp-tabs-nav">
                                 <div class="stp-tabs-scroll">
                                     <?php foreach ($itinerary as $index => $day): ?>
@@ -145,10 +136,8 @@ while (have_posts()) : the_post();
                                         </button>
                                     <?php endforeach; ?>
                                 </div>
-                                <div class="stp-tabs-indicator"></div>
                             </div>
 
-                            <!-- Tab Content -->
                             <div class="stp-tabs-panels">
                                 <?php foreach ($itinerary as $index => $day): ?>
                                     <div class="stp-tab-panel-modern <?php echo $index === 0 ? 'active' : ''; ?>"
@@ -167,9 +156,8 @@ while (have_posts()) : the_post();
                     </section>
                 <?php endif; ?>
 
-                <!-- Package Features - ULTRA COMPACT -->
+                <!-- Package Features -->
                 <?php
-                // Get visibility settings
                 $show_reason = get_post_meta(get_the_ID(), '_show_reason', true) !== '0';
                 $show_duration = get_post_meta(get_the_ID(), '_show_duration', true) !== '0';
                 $show_season = get_post_meta(get_the_ID(), '_show_season', true) !== '0';
@@ -179,7 +167,6 @@ while (have_posts()) : the_post();
                 $show_activity_types = get_post_meta(get_the_ID(), '_show_activity_types', true) !== '0';
                 $show_amenities = get_post_meta(get_the_ID(), '_show_amenities', true) !== '0';
 
-                // Get taxonomy terms
                 $reasons = $show_reason ? get_the_terms(get_the_ID(), 'tpm_label') : false;
                 $durations = $show_duration ? get_the_terms(get_the_ID(), 'tpm_duration') : false;
                 $seasons = $show_season ? get_the_terms(get_the_ID(), 'tpm_season') : false;
@@ -193,10 +180,7 @@ while (have_posts()) : the_post();
 
                 <?php if ($has_features): ?>
                 <section class="stp-features-modern">
-                    <h3 class="stp-features-title">
-                        <span class="stp-features-icon">✨</span>
-                        Package Features
-                    </h3>
+                    <h3 class="stp-features-title"><span class="stp-features-icon">✨</span> Package Features</h3>
                     <div class="stp-features-grid-modern">
                         <?php if ($reasons): ?>
                             <div class="stp-feature-row">
@@ -208,7 +192,6 @@ while (have_posts()) : the_post();
                                 </div>
                             </div>
                         <?php endif; ?>
-
                         <?php if ($durations): ?>
                             <div class="stp-feature-row">
                                 <span class="stp-feat-label">⏱️ Duration:</span>
@@ -219,7 +202,6 @@ while (have_posts()) : the_post();
                                 </div>
                             </div>
                         <?php endif; ?>
-
                         <?php if ($seasons): ?>
                             <div class="stp-feature-row">
                                 <span class="stp-feat-label">🌤️ Season:</span>
@@ -230,7 +212,6 @@ while (have_posts()) : the_post();
                                 </div>
                             </div>
                         <?php endif; ?>
-
                         <?php if ($difficulties): ?>
                             <div class="stp-feature-row">
                                 <span class="stp-feat-label">📊 Difficulty:</span>
@@ -241,7 +222,6 @@ while (have_posts()) : the_post();
                                 </div>
                             </div>
                         <?php endif; ?>
-
                         <?php if ($package_types): ?>
                             <div class="stp-feature-row">
                                 <span class="stp-feat-label">📦 Type:</span>
@@ -252,7 +232,6 @@ while (have_posts()) : the_post();
                                 </div>
                             </div>
                         <?php endif; ?>
-
                         <?php if ($activity_types): ?>
                             <div class="stp-feature-row">
                                 <span class="stp-feat-label">🏃 Activities:</span>
@@ -263,7 +242,6 @@ while (have_posts()) : the_post();
                                 </div>
                             </div>
                         <?php endif; ?>
-
                         <?php if ($amenities): ?>
                             <div class="stp-feature-row">
                                 <span class="stp-feat-label">🛎️ Amenities:</span>
@@ -278,7 +256,7 @@ while (have_posts()) : the_post();
                 </section>
                 <?php endif; ?>
 
-                <!-- WhatsApp CTA - ULTRA MODERN -->
+                <!-- WhatsApp CTA -->
                 <?php
                 $whatsapp_number = get_option('stp_whatsapp_number', '');
                 if (!empty($whatsapp_number)):
@@ -310,14 +288,43 @@ while (have_posts()) : the_post();
                 </div>
                 <?php endif; ?>
 
-                <!-- Elementor Content / Stay at Package (Below WhatsApp) -->
+                <!-- Share This Package -->
+                <?php
+                $enable_social = get_option('stp_enable_social_share', '1');
+                if ($enable_social === '1'):
+                    $url = get_permalink();
+                    $title = get_the_title();
+                    $facebook_url = 'https://www.facebook.com/sharer/sharer.php?u=' . urlencode($url);
+                    $twitter_url = 'https://twitter.com/intent/tweet?url=' . urlencode($url) . '&text=' . urlencode($title);
+                    $linkedin_url = 'https://www.linkedin.com/sharing/share-offsite/?url=' . urlencode($url);
+                    $whatsapp_share_url = 'https://wa.me/?text=' . urlencode($title . ' ' . $url);
+                    $email_url = 'mailto:?subject=' . urlencode($title) . '&body=' . urlencode($title . ' - ' . $url);
+                ?>
+                <div class="social-share-container" style="margin: 40px 0; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; text-align: center;">
+                    <h3 style="color: white; margin-top: 0; margin-bottom: 20px; font-size: 20px;">✨ Share This Package</h3>
+                    <div class="social-share-buttons" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                        <a href="<?php echo esc_url($facebook_url); ?>" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: #1877F2; color: white; border-radius: 50%; text-decoration: none;">
+                            <svg style="width: 24px; height: 24px; fill: currentColor;" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="<?php echo esc_url($twitter_url); ?>" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: #1DA1F2; color: white; border-radius: 50%; text-decoration: none;">
+                            <svg style="width: 24px; height: 24px; fill: currentColor;" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                        </a>
+                        <a href="<?php echo esc_url($linkedin_url); ?>" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: #0077B5; color: white; border-radius: 50%; text-decoration: none;">
+                            <svg style="width: 24px; height: 24px; fill: currentColor;" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </a>
+                        <a href="<?php echo esc_url($email_url); ?>" style="display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: #EA4335; color: white; border-radius: 50%; text-decoration: none;">
+                            <svg style="width: 24px; height: 24px; fill: currentColor;" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- Elementor Content -->
                 <?php
                 if (class_exists('\Elementor\Plugin')) {
                     $elementor_data = get_post_meta(get_the_ID(), '_elementor_data', true);
                     if ($elementor_data) {
-                        echo '<div class="stp-elementor-content">';
                         echo \Elementor\Plugin::instance()->frontend->get_builder_content_for_display(get_the_ID());
-                        echo '</div>';
                     }
                 }
                 ?>
