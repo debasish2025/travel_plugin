@@ -1,5 +1,5 @@
 /**
- * Travel Package Animations and Interactions
+ * Ultra Modern Travel Package Animations
  */
 
 (function($) {
@@ -8,66 +8,118 @@
     $(document).ready(function() {
 
         // =====================================
-        // HORIZONTAL TABS FUNCTIONALITY
+        // ULTRA MODERN TAB SWITCHING
         // =====================================
 
-        $('.stp-tab-btn').on('click', function() {
+        $('.stp-tab-button').on('click', function() {
             var tabId = $(this).data('tab');
 
-            // Remove active class from all buttons and panels
-            $('.stp-tab-btn').removeClass('active');
-            $('.stp-tab-panel').removeClass('active');
+            // Remove active from all
+            $('.stp-tab-button').removeClass('active');
+            $('.stp-tab-panel-modern').removeClass('active');
 
-            // Add active class to clicked button and corresponding panel
+            // Add active to clicked
             $(this).addClass('active');
             $('#' + tabId).addClass('active');
+
+            // Smooth scroll tabs into view on mobile
+            if ($(window).width() < 768) {
+                this.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
         });
 
         // =====================================
-        // GSAP ANIMATIONS (if available)
+        // GSAP SCROLL ANIMATIONS
         // =====================================
 
         if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
             gsap.registerPlugin(ScrollTrigger);
 
-            // Animate tabs container
-            gsap.from('.stp-tabs-container', {
+            // Section header animation
+            gsap.from('.stp-section-header', {
+                opacity: 0,
+                y: 50,
+                duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '.stp-section-header',
+                    start: 'top 80%'
+                }
+            });
+
+            // Tabs container
+            gsap.from('.stp-tabs-modern', {
                 opacity: 0,
                 y: 40,
                 duration: 0.8,
                 ease: 'power3.out',
                 scrollTrigger: {
-                    trigger: '.stp-tabs-container',
-                    start: 'top 80%'
+                    trigger: '.stp-tabs-modern',
+                    start: 'top 75%'
                 }
             });
 
-            // Animate features section
-            gsap.from('.stp-features-compact', {
+            // Tab buttons stagger animation
+            gsap.from('.stp-tab-button', {
+                opacity: 0,
+                scale: 0.8,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: 'back.out(1.7)',
+                scrollTrigger: {
+                    trigger: '.stp-tabs-nav',
+                    start: 'top 75%'
+                }
+            });
+
+            // Features section
+            gsap.from('.stp-features-modern', {
                 opacity: 0,
                 y: 30,
                 duration: 0.6,
                 ease: 'power2.out',
                 scrollTrigger: {
-                    trigger: '.stp-features-compact',
+                    trigger: '.stp-features-modern',
                     start: 'top 85%'
                 }
             });
 
-            // Animate WhatsApp button
-            gsap.from('.whatsapp-cta-container', {
-                scale: 0.9,
+            // Feature rows stagger
+            gsap.from('.stp-feature-row', {
                 opacity: 0,
+                x: -30,
                 duration: 0.5,
+                stagger: 0.1,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: '.stp-features-grid-modern',
+                    start: 'top 80%'
+                }
+            });
+
+            // WhatsApp card
+            gsap.from('.stp-whatsapp-card', {
+                opacity: 0,
+                scale: 0.95,
+                duration: 0.6,
                 ease: 'back.out(1.7)',
                 scrollTrigger: {
-                    trigger: '.whatsapp-cta-container',
-                    start: 'top 90%'
+                    trigger: '.stp-whatsapp-card',
+                    start: 'top 85%'
                 }
+            });
+
+            // Icon pulse animation
+            gsap.to('.stp-section-icon-wrapper', {
+                scale: 1.05,
+                duration: 2,
+                ease: 'power1.inOut',
+                yoyo: true,
+                repeat: -1
             });
         }
 
-        console.log('✅ Animations loaded');
+        console.log('✅ Ultra-modern animations loaded!');
     });
 
 })(jQuery);
