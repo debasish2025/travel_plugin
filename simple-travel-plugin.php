@@ -149,7 +149,10 @@ class Simple_Travel_Plugin {
             'normal',
             'high'
         );
-        
+
+        // OLD ITINERARY META BOX - REMOVED
+        // Now using enhanced meta box from enhanced-meta-boxes.php with rich text editor
+        /*
         add_meta_box(
             'package_itinerary',
             'Itinerary (Day by Day)',
@@ -158,6 +161,7 @@ class Simple_Travel_Plugin {
             'normal',
             'default'
         );
+        */
     }
     
     public function render_package_details($post) {
@@ -309,7 +313,10 @@ class Simple_Travel_Plugin {
         if (isset($_POST['page_template'])) {
             update_post_meta($post_id, '_page_template', sanitize_text_field($_POST['page_template']));
         }
-        
+
+        // OLD ITINERARY SAVE - REMOVED
+        // Now using enhanced save function from enhanced-meta-boxes.php which preserves HTML formatting
+        /*
         if (isset($_POST['package_itinerary_nonce']) && wp_verify_nonce($_POST['package_itinerary_nonce'], 'package_itinerary_nonce')) {
             $itinerary = array();
             if (isset($_POST['itinerary']) && is_array($_POST['itinerary'])) {
@@ -322,6 +329,7 @@ class Simple_Travel_Plugin {
             }
             update_post_meta($post_id, '_itinerary', $itinerary);
         }
+        */
     }
     
     public function register_elementor_widgets($widgets_manager) {
