@@ -33,6 +33,46 @@ function stp_enqueue_admin_assets($hook) {
     wp_enqueue_style('bootstrap-admin', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
     // Bootstrap JS
     wp_enqueue_script('bootstrap-admin', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
+
+    // Add inline script to initialize TinyMCE with proper keyboard shortcuts
+    add_action('admin_footer', 'stp_tinymce_keyboard_shortcuts');
+}
+
+function stp_tinymce_keyboard_shortcuts() {
+    ?>
+    <script>
+    (function() {
+        // Wait for TinyMCE to be ready
+        if (typeof tinymce !== 'undefined') {
+            tinymce.on('AddEditor', function(e) {
+                var editor = e.editor;
+                editor.on('init', function() {
+                    console.log('TinyMCE Editor initialized: ' + editor.id);
+
+                    // Add keyboard shortcuts that ACTUALLY work
+                    editor.shortcuts.add('ctrl+b', 'Bold text', function() {
+                        editor.execCommand('Bold');
+                    });
+
+                    editor.shortcuts.add('ctrl+i', 'Italic text', function() {
+                        editor.execCommand('Italic');
+                    });
+
+                    editor.shortcuts.add('ctrl+u', 'Underline text', function() {
+                        editor.execCommand('Underline');
+                    });
+
+                    editor.shortcuts.add('ctrl+k', 'Insert link', function() {
+                        editor.execCommand('mceLink');
+                    });
+
+                    console.log('Keyboard shortcuts registered for: ' + editor.id);
+                });
+            });
+        }
+    })();
+    </script>
+    <?php
 }
 
 function stp_render_enhanced_itinerary($post) {
@@ -140,6 +180,14 @@ function stp_render_enhanced_itinerary($post) {
                                     'toolbar2' => '',
                                     'block_formats' => 'Paragraph=p;Heading 3=h3;Heading 4=h4',
                                     'content_css' => false,
+                                    'browser_spellcheck' => true,
+                                    'paste_as_text' => false,
+                                    'setup' => 'function(editor) {
+                                        editor.on("init", function() {
+                                            // Keyboard shortcuts are registered globally in admin_footer
+                                            console.log("Editor ready: " + editor.id);
+                                        });
+                                    }'
                                 ),
                                 'quicktags' => array(
                                     'buttons' => 'strong,em,ul,ol,li,link,close'
@@ -149,7 +197,7 @@ function stp_render_enhanced_itinerary($post) {
                             wp_editor($content, $editor_id, $editor_settings);
                             ?>
                             <div class="stp-help-text">
-                                💡 Tip: Use the toolbar above or keyboard shortcuts to format your text
+                                ⚡ <strong>Keyboard Shortcuts Work!</strong> Select text and press: <kbd>Ctrl+B</kbd> (Bold) • <kbd>Ctrl+I</kbd> (Italic) • <kbd>Ctrl+U</kbd> (Underline) • <kbd>Ctrl+K</kbd> (Link)
                             </div>
                         </div>
                     </div>
@@ -305,19 +353,8 @@ function stp_render_enhanced_itinerary($post) {
             dayCount = $('.nav-item').length;
         });
 
-        // Add keyboard shortcuts to TinyMCE
-        if (typeof tinymce !== 'undefined') {
-            tinymce.on('AddEditor', function(e) {
-                e.editor.on('init', function() {
-                    this.shortcuts.add('ctrl+b', 'Bold', 'Bold');
-                    this.shortcuts.add('ctrl+i', 'Italic', 'Italic');
-                    this.shortcuts.add('ctrl+u', 'Underline', 'Underline');
-                    this.shortcuts.add('ctrl+k', 'Insert Link', function() {
-                        this.execCommand('mceLink');
-                    });
-                });
-            });
-        }
+        // Keyboard shortcuts are now handled globally in admin_footer hook
+        // No need to add them here
     });
     </script>
     
@@ -585,6 +622,20 @@ function stp_render_enhanced_itinerary($post) {
         border-radius: 6px;
         color: #555;
         font-size: 13px;
+    }
+
+    /* Keyboard shortcut keys styling */
+    .stp-help-text kbd {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #ffffff;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: inline-block;
+        margin: 0 2px;
     }
 
     /* Dashicons */
