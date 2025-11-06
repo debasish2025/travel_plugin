@@ -116,17 +116,6 @@ while (have_posts()) : the_post();
                     </section>
                 <?php endif; ?>
 
-                <!-- Elementor Content (if exists) -->
-                <?php
-                // Check if Elementor content exists
-                if (class_exists('\Elementor\Plugin')) {
-                    $elementor_data = get_post_meta(get_the_ID(), '_elementor_data', true);
-                    if ($elementor_data) {
-                        echo \Elementor\Plugin::instance()->frontend->get_builder_content_for_display(get_the_ID());
-                    }
-                }
-                ?>
-
                 <!-- Day by Day Itinerary - Modern Design -->
                 <?php if (!empty($itinerary) && is_array($itinerary)): ?>
                     <section class="stp-itinerary-modern">
@@ -341,7 +330,18 @@ while (have_posts()) : the_post();
                     }
                     </style>
                 <?php endif; ?>
-                
+
+                <!-- Elementor Content (if exists) -->
+                <?php
+                // Check if Elementor content exists
+                if (class_exists('\Elementor\Plugin')) {
+                    $elementor_data = get_post_meta(get_the_ID(), '_elementor_data', true);
+                    if ($elementor_data) {
+                        echo \Elementor\Plugin::instance()->frontend->get_builder_content_for_display(get_the_ID());
+                    }
+                }
+                ?>
+
             </div>
         </div>
         
