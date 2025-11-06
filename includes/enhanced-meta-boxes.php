@@ -243,6 +243,7 @@ function stp_render_enhanced_itinerary($post) {
         // Add new day tab
         $('#add-day-tab').on('click', function() {
             var newIndex = dayCount;
+            var editorId = 'itinerary_activities_' + newIndex;
 
             // Create new tab
             var newTab = `
@@ -262,7 +263,7 @@ function stp_render_enhanced_itinerary($post) {
                 </li>
             `;
 
-            // Create new tab content
+            // Create new tab content with proper wp-editor structure
             var newContent = `
                 <div class="tab-pane fade"
                      id="day-content-${newIndex}"
@@ -286,12 +287,16 @@ function stp_render_enhanced_itinerary($post) {
                                 <span class="stp-label-icon">✍️</span>
                                 Activities & Details
                             </label>
-                            <textarea name="itinerary[${newIndex}][activities]"
-                                      rows="10"
-                                      class="stp-input"
-                                      placeholder="Enter activities for this day... (Rich editor available after saving)"></textarea>
+                            <div id="wp-${editorId}-wrap" class="wp-core-ui wp-editor-wrap html-active">
+                                <link rel='stylesheet' id='editor-buttons-css' href='<?php echo includes_url('css/editor.min.css'); ?>' type='text/css' media='all' />
+                                <div id="wp-${editorId}-editor-container" class="wp-editor-container">
+                                    <textarea class="wp-editor-area" rows="10" autocomplete="off" cols="40"
+                                              name="itinerary[${newIndex}][activities]"
+                                              id="${editorId}"></textarea>
+                                </div>
+                            </div>
                             <div class="stp-help-text">
-                                💡 Tip: Save to enable rich text editor with formatting options
+                                ⚡ <strong>Keyboard Shortcuts:</strong> <kbd>Ctrl+B</kbd> (Bold) • <kbd>Ctrl+I</kbd> (Italic) • <kbd>Ctrl+U</kbd> (Underline) • <kbd>Ctrl+K</kbd> (Link)
                             </div>
                         </div>
                     </div>
@@ -301,6 +306,36 @@ function stp_render_enhanced_itinerary($post) {
             // Add tab and content
             $('#itinerary-tabs').append(newTab);
             $('#itinerary-tab-content').append(newContent);
+
+            // Initialize TinyMCE for the new editor
+            if (typeof tinymce !== 'undefined') {
+                var editorSettings = {
+                    selector: '#' + editorId,
+                    toolbar: 'formatselect | bold italic underline strikethrough | forecolor backcolor | bullist numlist | link unlink | alignleft aligncenter alignright | undo redo | removeformat',
+                    menubar: false,
+                    statusbar: false,
+                    height: 300,
+                    block_formats: 'Paragraph=p;Heading 3=h3;Heading 4=h4',
+                    browser_spellcheck: true,
+                    paste_as_text: false,
+                    forced_root_block: 'p',
+                    content_css: false,
+                    plugins: 'lists link paste',
+                    setup: function(editor) {
+                        editor.on('init', function() {
+                            console.log('✅ TinyMCE initialized for ' + editorId);
+                        });
+                    }
+                };
+
+                // Initialize TinyMCE
+                tinymce.init(editorSettings);
+
+                // Also initialize quicktags for text mode
+                if (typeof quicktags !== 'undefined') {
+                    quicktags({id: editorId, buttons: 'strong,em,ul,ol,li,link,close'});
+                }
+            }
 
             // Activate the new tab
             var newTabButton = $('#day-tab-' + newIndex);
