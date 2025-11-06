@@ -1,6 +1,7 @@
 /**
- * Quick Image Upload for Travel Packages
- * Inline image upload from admin list page
+ * Quick Actions for Travel Packages
+ * - Quick image upload from admin list page
+ * - Quick publish/unpublish toggle from admin list page
  */
 
 (function($) {
@@ -85,6 +86,66 @@
         });
 
         /**
+         * Handle status toggle button click
+         */
+        $(document).on('click', '.stp-toggle-status-btn', function(e) {
+            e.preventDefault();
+
+            var $button = $(this);
+            var $wrapper = $button.closest('.stp-quick-status-wrapper');
+            var postId = $button.data('post-id');
+            var targetStatus = $button.data('target-status');
+            var $loader = $wrapper.find('.stp-status-loader');
+            var $badge = $wrapper.find('.stp-status-badge');
+
+            // Disable button and show loader
+            $button.prop('disabled', true).hide();
+            $loader.show();
+
+            // Send AJAX request to toggle status
+            $.ajax({
+                url: stpQuickUpload.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'stp_toggle_status',
+                    nonce: stpQuickUpload.nonce,
+                    post_id: postId,
+                    target_status: targetStatus
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update badge text and style
+                        $badge.text(response.data.status_text);
+                        $badge.attr('style', 'display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 8px; ' + response.data.badge_style);
+
+                        // Update button text and classes
+                        $button.text(response.data.button_text);
+                        $button.removeClass('stp-publish-btn stp-unpublish-btn').addClass(response.data.button_class);
+                        $button.data('target-status', response.data.next_target_status);
+
+                        // Show success message
+                        showSuccessMessage($wrapper, response.data.message);
+
+                        // Hide loader, show button
+                        $loader.hide();
+                        $button.prop('disabled', false).show();
+
+                    } else {
+                        // Show error
+                        showErrorMessage($wrapper, response.data.message || 'Failed to update status');
+                        $loader.hide();
+                        $button.prop('disabled', false).show();
+                    }
+                },
+                error: function() {
+                    showErrorMessage($wrapper, 'Network error occurred');
+                    $loader.hide();
+                    $button.prop('disabled', false).show();
+                }
+            });
+        });
+
+        /**
          * Show success message
          */
         function showSuccessMessage($wrapper, message) {
@@ -124,7 +185,8 @@
                 100% { opacity: 0; transform: translateY(-10px); }
             }
 
-            .stp-quick-image-wrapper {
+            .stp-quick-image-wrapper,
+            .stp-quick-status-wrapper {
                 position: relative;
             }
 
@@ -142,7 +204,9 @@
         document.head.appendChild(style);
 
         // Log initialization
-        console.log('✅ Quick Image Upload initialized for', $('.stp-upload-image-btn').length, 'packages');
+        var imageCount = $('.stp-upload-image-btn').length;
+        var statusCount = $('.stp-toggle-status-btn').length;
+        console.log('✅ Quick Actions initialized: ' + imageCount + ' image uploads, ' + statusCount + ' status toggles available');
     });
 
 })(jQuery);
