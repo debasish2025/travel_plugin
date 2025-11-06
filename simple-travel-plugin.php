@@ -47,6 +47,7 @@ class Simple_Travel_Plugin {
         require_once STP_PATH . 'includes/class-tpm-taxonomies.php';
         require_once STP_PATH . 'includes/class-tpm-default-terms.php';
         require_once STP_PATH . 'includes/csv-import-fixed.php';
+        require_once STP_PATH . 'includes/csv-import.php'; // New powerful CSV importer with HTML support
         require_once STP_PATH . 'includes/enhanced-meta-boxes.php';
         require_once STP_PATH . 'includes/whatsapp-social-related.php';
     }
