@@ -1,6 +1,6 @@
 <?php
 /**
- * Single Travel Package Template
+ * Single Travel Package Template - Ultra Modern Masterpiece
  */
 
 get_header();
@@ -103,9 +103,9 @@ while (have_posts()) : the_post();
                     <section class="stp-description-section">
                         <div class="stp-content-wrapper">
                             <?php
-                            // Remove all automatic filters
                             remove_filter('the_content', 'stp_add_whatsapp_cta', 25);
                             remove_filter('the_content', 'stp_add_social_share', 30);
+                            remove_filter('the_content', 'stp_add_related_packages', 35);
                             the_content();
                             ?>
                         </div>
@@ -318,6 +318,63 @@ while (have_posts()) : the_post();
                     </div>
                 </div>
                 <?php endif; ?>
+
+                <!-- You May Also Like / Related Packages -->
+                <?php
+                $enable_related = get_option('stp_enable_related_packages', '1');
+                if ($enable_related === '1'):
+                    $related_count = get_option('stp_related_packages_count', 4);
+                    $categories = wp_get_post_terms(get_the_ID(), 'package_category', array('fields' => 'ids'));
+
+                    $args = array(
+                        'post_type' => 'travel_package',
+                        'posts_per_page' => $related_count,
+                        'post__not_in' => array(get_the_ID()),
+                        'orderby' => 'rand'
+                    );
+
+                    if (!empty($categories)) {
+                        $args['tax_query'] = array(
+                            array(
+                                'taxonomy' => 'package_category',
+                                'field' => 'term_id',
+                                'terms' => $categories
+                            )
+                        );
+                    }
+
+                    $related_query = new WP_Query($args);
+
+                    if ($related_query->have_posts()):
+                ?>
+                <div class="stp-related-modern">
+                    <h3 class="stp-related-title">🌟 You May Also Like</h3>
+                    <div class="stp-related-grid">
+                        <?php while ($related_query->have_posts()): $related_query->the_post(); ?>
+                            <a href="<?php the_permalink(); ?>" class="stp-related-card">
+                                <?php if (has_post_thumbnail()): ?>
+                                    <div class="stp-related-img">
+                                        <?php the_post_thumbnail('medium'); ?>
+                                        <div class="stp-related-overlay"></div>
+                                    </div>
+                                <?php endif; ?>
+                                <div class="stp-related-body">
+                                    <h4 class="stp-related-name"><?php the_title(); ?></h4>
+                                    <?php
+                                    $price = get_post_meta(get_the_ID(), '_price', true);
+                                    if ($price):
+                                    ?>
+                                        <div class="stp-related-price">From $<?php echo esc_html($price); ?></div>
+                                    <?php endif; ?>
+                                </div>
+                            </a>
+                        <?php endwhile; wp_reset_postdata(); ?>
+                    </div>
+                </div>
+                <?php
+                    endif;
+                endif;
+                ?>
 
                 <!-- Elementor Content -->
                 <?php

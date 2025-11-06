@@ -29,13 +29,13 @@
         });
 
         // =====================================
-        // GSAP SCROLL ANIMATIONS
+        // GSAP SCROLL ANIMATIONS - FIXED
         // =====================================
 
         if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
             gsap.registerPlugin(ScrollTrigger);
 
-            // Section header animation
+            // Section header - no initial hide
             gsap.from('.stp-section-header', {
                 opacity: 0,
                 y: 50,
@@ -43,11 +43,12 @@
                 ease: 'power3.out',
                 scrollTrigger: {
                     trigger: '.stp-section-header',
-                    start: 'top 80%'
+                    start: 'top 80%',
+                    once: true
                 }
             });
 
-            // Tabs container
+            // Tabs container - no initial hide
             gsap.from('.stp-tabs-modern', {
                 opacity: 0,
                 y: 40,
@@ -55,22 +56,13 @@
                 ease: 'power3.out',
                 scrollTrigger: {
                     trigger: '.stp-tabs-modern',
-                    start: 'top 75%'
+                    start: 'top 75%',
+                    once: true
                 }
             });
 
-            // Tab buttons stagger animation
-            gsap.from('.stp-tab-button', {
-                opacity: 0,
-                scale: 0.8,
-                duration: 0.5,
-                stagger: 0.1,
-                ease: 'back.out(1.7)',
-                scrollTrigger: {
-                    trigger: '.stp-tabs-nav',
-                    start: 'top 75%'
-                }
-            });
+            // IMPORTANT: Don't animate tab buttons - they need to be visible!
+            // Remove the tab-button animation that was hiding them
 
             // Features section
             gsap.from('.stp-features-modern', {
@@ -80,20 +72,8 @@
                 ease: 'power2.out',
                 scrollTrigger: {
                     trigger: '.stp-features-modern',
-                    start: 'top 85%'
-                }
-            });
-
-            // Feature rows stagger
-            gsap.from('.stp-feature-row', {
-                opacity: 0,
-                x: -30,
-                duration: 0.5,
-                stagger: 0.1,
-                ease: 'power2.out',
-                scrollTrigger: {
-                    trigger: '.stp-features-grid-modern',
-                    start: 'top 80%'
+                    start: 'top 85%',
+                    once: true
                 }
             });
 
@@ -105,7 +85,8 @@
                 ease: 'back.out(1.7)',
                 scrollTrigger: {
                     trigger: '.stp-whatsapp-card',
-                    start: 'top 85%'
+                    start: 'top 85%',
+                    once: true
                 }
             });
 
