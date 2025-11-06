@@ -9,11 +9,11 @@ if (!defined('ABSPATH')) exit;
 class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
     
     public function get_name() {
-        return 'destination_grid';
+        return 'wedyara_destination_grid';
     }
-    
+
     public function get_title() {
-        return 'Destination Grid';
+        return 'Wedyara - Destination Grid';
     }
     
     public function get_icon() {

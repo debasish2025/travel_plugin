@@ -9,11 +9,11 @@ if (!defined('ABSPATH')) exit;
 class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
     
     public function get_name() {
-        return 'fullwidth_slider';
+        return 'wedyara_fullwidth_slider';
     }
-    
+
     public function get_title() {
-        return 'Full Width Slider';
+        return 'Wedyara - Full Width Slider';
     }
     
     public function get_icon() {

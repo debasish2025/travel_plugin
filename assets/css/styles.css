@@ -2149,3 +2149,216 @@
         min-height: 220px;
     }
 }
+
+/* ===================================
+   WEDYARA CAROUSEL - SWIPER.JS BASED
+   =================================== */
+
+.wedyara-carousel-wrapper {
+    position: relative;
+    padding: 20px 60px;
+    margin: 0 auto;
+    max-width: 1400px;
+}
+
+.wedyara-carousel-wrapper .swiper {
+    width: 100%;
+    padding: 20px 0 50px 0;
+}
+
+.wedyara-carousel-wrapper .swiper-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+.wedyara-carousel-wrapper .swiper-slide {
+    height: auto;
+    display: flex;
+}
+
+/* Carousel Card */
+.wedyara-carousel-card {
+    display: flex !important;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+}
+
+.wedyara-carousel-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+}
+
+/* Image Container */
+.wedyara-carousel-image {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.wedyara-carousel-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.wedyara-carousel-card:hover .wedyara-carousel-image img {
+    transform: scale(1.08);
+}
+
+/* Content Container */
+.wedyara-carousel-content {
+    padding: 20px 15px;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Title */
+.wedyara-carousel-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+/* Subtitle */
+.wedyara-carousel-subtitle {
+    font-size: 14px;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+}
+
+/* Duration */
+.wedyara-carousel-duration {
+    font-size: 13px;
+    color: #888;
+    margin: 8px 0 0 0;
+}
+
+/* Price */
+.wedyara-carousel-price {
+    font-size: 18px;
+    font-weight: 600;
+    color: #667eea;
+    margin: auto 0 0 0;
+    padding-top: 10px;
+}
+
+/* Navigation Arrows */
+.wedyara-carousel-wrapper .swiper-button-prev,
+.wedyara-carousel-wrapper .swiper-button-next {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    color: #667eea;
+    transition: all 0.3s ease;
+}
+
+.wedyara-carousel-wrapper .swiper-button-prev::after,
+.wedyara-carousel-wrapper .swiper-button-next::after {
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.wedyara-carousel-wrapper .swiper-button-prev:hover,
+.wedyara-carousel-wrapper .swiper-button-next:hover {
+    background: #667eea;
+    color: white;
+    transform: scale(1.1);
+}
+
+.wedyara-carousel-wrapper .swiper-button-prev {
+    left: 10px;
+}
+
+.wedyara-carousel-wrapper .swiper-button-next {
+    right: 10px;
+}
+
+.wedyara-carousel-wrapper .swiper-button-disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Pagination */
+.wedyara-carousel-wrapper .swiper-pagination {
+    bottom: 10px;
+}
+
+.wedyara-carousel-wrapper .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background: #667eea;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.wedyara-carousel-wrapper .swiper-pagination-bullet-active {
+    opacity: 1;
+    width: 28px;
+    border-radius: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .wedyara-carousel-wrapper {
+        padding: 20px 50px;
+    }
+
+    .wedyara-carousel-image {
+        height: 220px;
+    }
+
+    .wedyara-carousel-wrapper .swiper-button-prev,
+    .wedyara-carousel-wrapper .swiper-button-next {
+        width: 40px;
+        height: 40px;
+    }
+
+    .wedyara-carousel-wrapper .swiper-button-prev::after,
+    .wedyara-carousel-wrapper .swiper-button-next::after {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 640px) {
+    .wedyara-carousel-wrapper {
+        padding: 20px 40px;
+    }
+
+    .wedyara-carousel-image {
+        height: 200px;
+    }
+
+    .wedyara-carousel-title {
+        font-size: 16px;
+    }
+
+    .wedyara-carousel-content {
+        padding: 16px 12px;
+    }
+
+    .wedyara-carousel-wrapper .swiper-button-prev,
+    .wedyara-carousel-wrapper .swiper-button-next {
+        width: 35px;
+        height: 35px;
+    }
+
+    .wedyara-carousel-wrapper .swiper-button-prev::after,
+    .wedyara-carousel-wrapper .swiper-button-next::after {
+        font-size: 16px;
+    }
+}
