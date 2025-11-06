@@ -42,7 +42,7 @@ function stp_tinymce_keyboard_shortcuts() {
     ?>
     <script type="text/javascript">
     jQuery(document).ready(function($) {
-        // TinyMCE has built-in shortcuts, but we need to ensure they're active
+        // Ensure TinyMCE shortcuts work properly in visual mode
 
         if (typeof tinymce !== 'undefined') {
             // Hook into ALL editors being added
@@ -53,29 +53,59 @@ function stp_tinymce_keyboard_shortcuts() {
                 editor.on('init', function() {
                     console.log('✅ TinyMCE Editor Ready: ' + editor.id);
 
-                    // Force enable shortcuts (they should work by default, but let's make sure)
-                    editor.shortcuts.add('ctrl+b', 'Bold', 'Bold');
-                    editor.shortcuts.add('meta+b', 'Bold', 'Bold'); // Mac
+                    // TinyMCE already has shortcuts, but we need to ensure they execute properly
+                    // Remove any existing shortcuts first to avoid conflicts
+                    editor.shortcuts.remove('ctrl+b');
+                    editor.shortcuts.remove('meta+b');
+                    editor.shortcuts.remove('ctrl+i');
+                    editor.shortcuts.remove('meta+i');
+                    editor.shortcuts.remove('ctrl+u');
+                    editor.shortcuts.remove('meta+u');
 
-                    editor.shortcuts.add('ctrl+i', 'Italic', 'Italic');
-                    editor.shortcuts.add('meta+i', 'Italic', 'Italic'); // Mac
+                    // Re-add shortcuts with proper command execution
+                    editor.shortcuts.add('ctrl+b', 'Bold text', function() {
+                        editor.execCommand('Bold');
+                        return false;
+                    });
+                    editor.shortcuts.add('meta+b', 'Bold text', function() {
+                        editor.execCommand('Bold');
+                        return false;
+                    });
 
-                    editor.shortcuts.add('ctrl+u', 'Underline', 'Underline');
-                    editor.shortcuts.add('meta+u', 'Underline', 'Underline'); // Mac
+                    editor.shortcuts.add('ctrl+i', 'Italic text', function() {
+                        editor.execCommand('Italic');
+                        return false;
+                    });
+                    editor.shortcuts.add('meta+i', 'Italic text', function() {
+                        editor.execCommand('Italic');
+                        return false;
+                    });
 
-                    editor.shortcuts.add('ctrl+k', 'Link', 'mceLink');
-                    editor.shortcuts.add('meta+k', 'Link', 'mceLink'); // Mac
+                    editor.shortcuts.add('ctrl+u', 'Underline text', function() {
+                        editor.execCommand('Underline');
+                        return false;
+                    });
+                    editor.shortcuts.add('meta+u', 'Underline text', function() {
+                        editor.execCommand('Underline');
+                        return false;
+                    });
 
-                    console.log('⚡ Keyboard shortcuts registered for: ' + editor.id);
-                    console.log('Try: Ctrl+B (Bold), Ctrl+I (Italic), Ctrl+U (Underline), Ctrl+K (Link)');
+                    editor.shortcuts.add('ctrl+k', 'Insert link', function() {
+                        editor.execCommand('mceLink');
+                        return false;
+                    });
+                    editor.shortcuts.add('meta+k', 'Insert link', function() {
+                        editor.execCommand('mceLink');
+                        return false;
+                    });
 
-                    // Test if shortcuts work
-                    editor.on('keydown', function(e) {
-                        if (e.ctrlKey || e.metaKey) {
-                            var key = String.fromCharCode(e.keyCode).toLowerCase();
-                            if (key === 'b' || key === 'i' || key === 'u' || key === 'k') {
-                                console.log('🎯 Shortcut pressed: Ctrl+' + key.toUpperCase());
-                            }
+                    console.log('⚡ Keyboard shortcuts properly configured for: ' + editor.id);
+                    console.log('✅ Try: Ctrl+B (Bold), Ctrl+I (Italic), Ctrl+U (Underline), Ctrl+K (Link)');
+
+                    // Add visual feedback when shortcuts are used
+                    editor.on('ExecCommand', function(e) {
+                        if (['Bold', 'Italic', 'Underline', 'mceLink'].indexOf(e.command) !== -1) {
+                            console.log('✨ Executed: ' + e.command);
                         }
                     });
                 });
@@ -737,3 +767,161 @@ function stp_save_enhanced_itinerary($post_id, $post) {
 }
 
 // Removed detailed itinerary display from frontend - only day-by-day itinerary is shown now
+
+// ========================================
+// FEATURE VISIBILITY CONTROLS META BOX
+// ========================================
+
+// Add feature visibility meta box
+add_action('add_meta_boxes', 'stp_add_feature_visibility_metabox', 25);
+
+function stp_add_feature_visibility_metabox() {
+    add_meta_box(
+        'package_feature_visibility',
+        '⚙️ Frontend Display Settings',
+        'stp_render_feature_visibility',
+        'travel_package',
+        'side',
+        'default'
+    );
+}
+
+function stp_render_feature_visibility($post) {
+    wp_nonce_field('package_feature_visibility_nonce', 'package_feature_visibility_nonce');
+
+    // Get current settings (default all to checked)
+    $show_reason = get_post_meta($post->ID, '_show_reason', true) !== '0';
+    $show_duration = get_post_meta($post->ID, '_show_duration', true) !== '0';
+    $show_season = get_post_meta($post->ID, '_show_season', true) !== '0';
+    $show_difficulty = get_post_meta($post->ID, '_show_difficulty', true) !== '0';
+    $show_label = get_post_meta($post->ID, '_show_label', true) !== '0';
+    $show_package_types = get_post_meta($post->ID, '_show_package_types', true) !== '0';
+    $show_activity_types = get_post_meta($post->ID, '_show_activity_types', true) !== '0';
+    $show_amenities = get_post_meta($post->ID, '_show_amenities', true) !== '0';
+
+    ?>
+    <div class="stp-visibility-controls">
+        <p style="margin-bottom: 15px; color: #666; font-size: 13px;">
+            <strong>Control which features appear on the single package page:</strong>
+        </p>
+
+        <div class="stp-checkbox-group">
+            <label class="stp-checkbox-label">
+                <input type="checkbox" name="show_reason" value="1" <?php checked($show_reason, true); ?>>
+                <span>Show Reason/Why Visit</span>
+            </label>
+
+            <label class="stp-checkbox-label">
+                <input type="checkbox" name="show_duration" value="1" <?php checked($show_duration, true); ?>>
+                <span>Show Duration</span>
+            </label>
+
+            <label class="stp-checkbox-label">
+                <input type="checkbox" name="show_season" value="1" <?php checked($show_season, true); ?>>
+                <span>Show Season</span>
+            </label>
+
+            <label class="stp-checkbox-label">
+                <input type="checkbox" name="show_difficulty" value="1" <?php checked($show_difficulty, true); ?>>
+                <span>Show Difficulty Level</span>
+            </label>
+
+            <label class="stp-checkbox-label">
+                <input type="checkbox" name="show_label" value="1" <?php checked($show_label, true); ?>>
+                <span>Show Labels</span>
+            </label>
+
+            <label class="stp-checkbox-label">
+                <input type="checkbox" name="show_package_types" value="1" <?php checked($show_package_types, true); ?>>
+                <span>Show Package Types</span>
+            </label>
+
+            <label class="stp-checkbox-label">
+                <input type="checkbox" name="show_activity_types" value="1" <?php checked($show_activity_types, true); ?>>
+                <span>Show Activity Types</span>
+            </label>
+
+            <label class="stp-checkbox-label">
+                <input type="checkbox" name="show_amenities" value="1" <?php checked($show_amenities, true); ?>>
+                <span>Show Amenities</span>
+            </label>
+        </div>
+    </div>
+
+    <style>
+    .stp-visibility-controls {
+        padding: 10px 0;
+    }
+
+    .stp-checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .stp-checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+
+    .stp-checkbox-label:hover {
+        background-color: #f5f5f5;
+    }
+
+    .stp-checkbox-label input[type="checkbox"] {
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .stp-checkbox-label span {
+        font-size: 13px;
+        color: #333;
+    }
+    </style>
+    <?php
+}
+
+// Save feature visibility settings
+add_action('save_post', 'stp_save_feature_visibility', 10, 2);
+
+function stp_save_feature_visibility($post_id, $post) {
+    // Security checks
+    if (!isset($_POST['package_feature_visibility_nonce']) ||
+        !wp_verify_nonce($_POST['package_feature_visibility_nonce'], 'package_feature_visibility_nonce')) {
+        return;
+    }
+
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    if ($post->post_type != 'travel_package') {
+        return;
+    }
+
+    // Save each checkbox value (1 if checked, 0 if not)
+    $fields = array(
+        'show_reason',
+        'show_duration',
+        'show_season',
+        'show_difficulty',
+        'show_label',
+        'show_package_types',
+        'show_activity_types',
+        'show_amenities'
+    );
+
+    foreach ($fields as $field) {
+        $value = isset($_POST[$field]) ? '1' : '0';
+        update_post_meta($post_id, '_' . $field, $value);
+    }
+}
