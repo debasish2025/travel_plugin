@@ -1,0 +1,710 @@
+/* ========================================
+   Simple Travel Plugin - Styles
+   Matches your UI design exactly
+======================================== */
+
+/* === SINGLE PACKAGE PAGE STYLES === */
+
+/* Template 1: Classic Hero */
+.stp-hero-classic {
+    position: relative;
+    height: 600px;
+    overflow: hidden;
+}
+
+.stp-hero-classic .stp-hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.stp-hero-classic .stp-hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stp-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+}
+
+.stp-hero-content {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.stp-hero-title {
+    font-size: 56px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 20px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.stp-hero-subtitle {
+    font-size: 24px;
+    color: #fff;
+    margin: 0 0 30px 0;
+    font-weight: 300;
+}
+
+.stp-duration-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255,255,255,0.95);
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.stp-duration-badge .stp-separator {
+    color: #E91E63;
+}
+
+/* Template 2: Modern Split */
+.stp-hero-modern {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stp-modern-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.stp-hero-modern .stp-hero-title {
+    font-size: 48px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.stp-hero-modern .stp-hero-subtitle {
+    font-size: 20px;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 30px;
+}
+
+.stp-modern-image img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+/* Template 3: Full Width Hero */
+.stp-hero-fullwidth {
+    position: relative;
+    height: 700px;
+}
+
+.stp-hero-image-full {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.stp-hero-image-full img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stp-hero-overlay-dark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.stp-hero-content-centered {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.stp-hero-title-large {
+    font-size: 72px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 25px 0;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+}
+
+.stp-hero-subtitle-large {
+    font-size: 28px;
+    color: #fff;
+    margin: 0 0 40px 0;
+    font-weight: 300;
+}
+
+.stp-duration-badge-large {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    background: #fff;
+    padding: 20px 40px;
+    border-radius: 60px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.3);
+}
+
+/* Package Content Area */
+.stp-package-content {
+    padding: 80px 0;
+    background: #fff;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Description Section */
+.stp-description-section {
+    margin-bottom: 60px;
+}
+
+.stp-content-wrapper {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #333;
+}
+
+.stp-content-wrapper p {
+    margin-bottom: 20px;
+}
+
+/* Itinerary Section */
+.stp-itinerary-section {
+    margin-top: 60px;
+}
+
+.stp-section-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 50px 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stp-title-icon {
+    font-size: 48px;
+}
+
+.stp-itinerary-timeline {
+    position: relative;
+    padding-left: 0;
+}
+
+.stp-itinerary-day-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 5px solid #E91E63;
+}
+
+.stp-itinerary-day-item:hover {
+    transform: translateX(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.stp-day-number {
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    height: fit-content;
+}
+
+.stp-day-number span {
+    display: block;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    opacity: 0.9;
+}
+
+.stp-day-number strong {
+    display: block;
+    font-size: 36px;
+    font-weight: 800;
+}
+
+.stp-day-content {
+    padding: 10px 0;
+}
+
+.stp-day-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 20px 0;
+}
+
+.stp-day-activities {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #555;
+}
+
+.stp-day-activities p {
+    margin-bottom: 15px;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .stp-hero-title {
+        font-size: 42px;
+    }
+    
+    .stp-hero-title-large {
+        font-size: 52px;
+    }
+    
+    .stp-modern-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .stp-itinerary-day-item {
+        grid-template-columns: 100px 1fr;
+        gap: 20px;
+    }
+    
+    .stp-day-number strong {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .stp-hero-classic,
+    .stp-hero-fullwidth {
+        height: 400px;
+    }
+    
+    .stp-hero-title {
+        font-size: 32px;
+    }
+    
+    .stp-hero-subtitle {
+        font-size: 18px;
+    }
+    
+    .stp-hero-title-large {
+        font-size: 36px;
+    }
+    
+    .stp-hero-subtitle-large {
+        font-size: 20px;
+    }
+    
+    .stp-duration-badge,
+    .stp-duration-badge-large {
+        font-size: 14px;
+        padding: 10px 20px;
+        gap: 10px;
+    }
+    
+    .stp-itinerary-day-item {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+    
+    .stp-day-number {
+        display: inline-block;
+        padding: 15px 25px;
+    }
+    
+    .stp-day-title {
+        font-size: 22px;
+    }
+    
+    .stp-section-title {
+        font-size: 32px;
+    }
+}
+
+
+/* === DESTINATION GRID (3x2 Layout) === */
+.stp-destination-grid-section {
+    padding: 60px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.stp-section-title {
+    font-size: 42px;
+    font-weight: 400;
+    margin-bottom: 50px;
+    line-height: 1.3;
+}
+
+.stp-section-title strong {
+    font-weight: 700;
+}
+
+.stp-destination-grid {
+    display: grid;
+    gap: 30px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.stp-destination-grid.columns-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.stp-destination-grid.columns-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.stp-destination-card {
+    background: #fff;
+    border-radius: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stp-destination-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.stp-card-image {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.stp-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.stp-destination-card:hover .stp-card-image img {
+    transform: scale(1.1);
+}
+
+.stp-card-content {
+    padding: 25px 20px;
+    text-align: center;
+}
+
+.stp-card-title {
+    font-size: 24px;
+    font-weight: 400;
+    margin: 0 0 8px 0;
+    color: #000;
+}
+
+.stp-card-subtitle {
+    font-size: 15px;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Responsive Grid */
+@media (max-width: 992px) {
+    .stp-destination-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .stp-destination-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stp-section-title {
+        font-size: 32px;
+    }
+}
+
+
+/* === DESTINATION CAROUSEL (Horizontal Slider) === */
+.stp-carousel-wrapper {
+    padding: 40px 0;
+    position: relative;
+}
+
+.stp-carousel {
+    margin: 0 50px;
+}
+
+.stp-carousel-card {
+    margin: 0 10px;
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.stp-carousel-card:hover {
+    transform: translateY(-5px);
+}
+
+.stp-carousel-image {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.stp-carousel-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stp-carousel-content {
+    padding: 20px 15px;
+    text-align: center;
+}
+
+.stp-carousel-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.stp-carousel-subtitle {
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Slick Carousel Arrows */
+.stp-carousel .slick-prev,
+.stp-carousel .slick-next {
+    width: 40px;
+    height: 40px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.stp-carousel .slick-prev {
+    left: -50px;
+}
+
+.stp-carousel .slick-next {
+    right: -50px;
+}
+
+.stp-carousel .slick-prev:hover,
+.stp-carousel .slick-next:hover {
+    background: rgba(0,0,0,0.8);
+}
+
+/* Slick Dots */
+.stp-carousel-dots {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.stp-carousel-dots .slick-dots li button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ddd;
+}
+
+.stp-carousel-dots .slick-dots li.slick-active button {
+    background: #000;
+}
+
+@media (max-width: 768px) {
+    .stp-carousel {
+        margin: 0 20px;
+    }
+    
+    .stp-carousel .slick-prev {
+        left: -20px;
+    }
+    
+    .stp-carousel .slick-next {
+        right: -20px;
+    }
+}
+
+
+/* === FULL WIDTH SLIDER (Pink Background) === */
+.stp-fullwidth-slider-section {
+    width: 100%;
+    position: relative;
+}
+
+.stp-fullwidth-slider {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.stp-fullwidth-slide {
+    padding: 0 15px;
+}
+
+.stp-fullwidth-image {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 0;
+}
+
+.stp-fullwidth-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.stp-fullwidth-slide:hover .stp-fullwidth-image img {
+    transform: scale(1.05);
+}
+
+.stp-fullwidth-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 400;
+    margin: 20px 0 0 0;
+    padding: 0;
+}
+
+/* Full Width Slider Arrows */
+.stp-fullwidth-slider .slick-prev,
+.stp-fullwidth-slider .slick-next {
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.stp-fullwidth-slider .slick-prev {
+    left: 20px;
+}
+
+.stp-fullwidth-slider .slick-next {
+    right: 20px;
+}
+
+.stp-fullwidth-slider .slick-prev:hover,
+.stp-fullwidth-slider .slick-next:hover {
+    background: rgba(255,255,255,0.6);
+}
+
+.stp-fullwidth-slider .slick-prev:before,
+.stp-fullwidth-slider .slick-next:before {
+    font-size: 30px;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .stp-fullwidth-image {
+        height: 300px;
+    }
+    
+    .stp-fullwidth-title {
+        font-size: 18px;
+    }
+}
+
+
+/* === BUTTON STYLES === */
+.stp-explore-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background: #E91E63;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.stp-explore-btn:hover {
+    background: #C2185B;
+    color: #fff;
+}
+
+
+/* === LOADING SPINNER === */
+.stp-loading {
+    text-align: center;
+    padding: 50px;
+}
+
+.stp-loading:after {
+    content: "";
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #E91E63;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* === GENERAL HELPERS === */
+.stp-text-center {
+    text-align: center;
+}
+
+.stp-mt-20 {
+    margin-top: 20px;
+}
+
+.stp-mb-20 {
+    margin-bottom: 20px;
+}
+
+.stp-py-60 {
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
