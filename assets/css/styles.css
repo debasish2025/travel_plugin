@@ -202,23 +202,38 @@
     margin-bottom: 20px;
 }
 
-/* Itinerary Section */
+/* Itinerary Section - Modern Design */
 .stp-itinerary-section {
     margin-top: 60px;
+    padding: 40px 0;
 }
 
 .stp-section-title {
-    font-size: 42px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0 0 50px 0;
+    font-size: 48px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0 0 60px 0;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.stp-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 120px;
+    height: 5px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 3px;
 }
 
 .stp-title-icon {
-    font-size: 48px;
+    font-size: 52px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .stp-itinerary-timeline {
@@ -226,65 +241,175 @@
     padding-left: 0;
 }
 
+/* Modern card design for itinerary items */
 .stp-itinerary-day-item {
     display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 40px;
-    margin-bottom: 40px;
-    padding: 30px;
-    background: #f8f9fa;
-    border-radius: 15px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-left: 5px solid #E91E63;
+    grid-template-columns: 140px 1fr;
+    gap: 35px;
+    margin-bottom: 35px;
+    padding: 35px;
+    background: #ffffff;
+    border-radius: 20px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid #f0f0f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+}
+
+.stp-itinerary-day-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .stp-itinerary-day-item:hover {
-    transform: translateX(10px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+    border-color: #667eea;
+}
+
+.stp-itinerary-day-item:hover::before {
+    opacity: 1;
 }
 
 .stp-day-number {
     text-align: center;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
-    border-radius: 15px;
-    padding: 20px;
+    border-radius: 18px;
+    padding: 25px 15px;
     height: fit-content;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    position: relative;
+}
+
+.stp-day-number::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -20px;
+    width: 0;
+    height: 0;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-left: 20px solid #764ba2;
+    transform: translateY(-50%);
 }
 
 .stp-day-number span {
     display: block;
-    font-size: 14px;
+    font-size: 12px;
     text-transform: uppercase;
-    margin-bottom: 5px;
-    opacity: 0.9;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    opacity: 0.95;
+    font-weight: 600;
 }
 
 .stp-day-number strong {
     display: block;
-    font-size: 36px;
-    font-weight: 800;
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1;
 }
 
 .stp-day-content {
-    padding: 10px 0;
+    padding: 5px 0;
 }
 
 .stp-day-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0 0 20px 0;
+    font-size: 32px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0 0 25px 0;
+    line-height: 1.3;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .stp-day-activities {
-    font-size: 16px;
-    line-height: 1.8;
-    color: #555;
+    font-size: 17px;
+    line-height: 1.9;
+    color: #444;
 }
 
 .stp-day-activities p {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
+}
+
+/* Enhanced list styling for activities */
+.stp-day-activities ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 20px 0;
+}
+
+.stp-day-activities ul li {
+    padding-left: 35px;
+    position: relative;
+    margin-bottom: 12px;
+    line-height: 1.8;
+}
+
+.stp-day-activities ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+    font-size: 20px;
+    width: 25px;
+    height: 25px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.stp-day-activities ol {
+    padding-left: 25px;
+    margin: 20px 0;
+}
+
+.stp-day-activities ol li {
+    margin-bottom: 12px;
+    line-height: 1.8;
+}
+
+/* Bold and italic text styling */
+.stp-day-activities strong {
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.stp-day-activities em {
+    color: #667eea;
+    font-style: italic;
+}
+
+/* Link styling */
+.stp-day-activities a {
+    color: #667eea;
+    text-decoration: none;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.stp-day-activities a:hover {
+    color: #764ba2;
+    border-bottom-color: #764ba2;
 }
 
 /* Responsive Styles */
@@ -292,22 +417,27 @@
     .stp-hero-title {
         font-size: 42px;
     }
-    
+
     .stp-hero-title-large {
         font-size: 52px;
     }
-    
+
     .stp-modern-grid {
         grid-template-columns: 1fr;
         gap: 40px;
     }
-    
+
     .stp-itinerary-day-item {
-        grid-template-columns: 100px 1fr;
-        gap: 20px;
+        grid-template-columns: 120px 1fr;
+        gap: 25px;
+        padding: 28px;
     }
-    
+
     .stp-day-number strong {
+        font-size: 36px;
+    }
+
+    .stp-day-title {
         font-size: 28px;
     }
 }
@@ -317,46 +447,78 @@
     .stp-hero-fullwidth {
         height: 400px;
     }
-    
+
     .stp-hero-title {
         font-size: 32px;
     }
-    
+
     .stp-hero-subtitle {
         font-size: 18px;
     }
-    
+
     .stp-hero-title-large {
         font-size: 36px;
     }
-    
+
     .stp-hero-subtitle-large {
         font-size: 20px;
     }
-    
+
     .stp-duration-badge,
     .stp-duration-badge-large {
         font-size: 14px;
         padding: 10px 20px;
         gap: 10px;
     }
-    
+
+    .stp-section-title {
+        font-size: 36px;
+        margin-bottom: 40px;
+    }
+
     .stp-itinerary-day-item {
         grid-template-columns: 1fr;
-        padding: 20px;
+        padding: 25px 20px;
+        gap: 20px;
     }
-    
+
     .stp-day-number {
-        display: inline-block;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 15px;
         padding: 15px 25px;
+        width: fit-content;
     }
-    
-    .stp-day-title {
-        font-size: 22px;
+
+    .stp-day-number::after {
+        display: none;
     }
-    
-    .stp-section-title {
+
+    .stp-day-number span {
+        font-size: 11px;
+        margin-bottom: 0;
+    }
+
+    .stp-day-number strong {
         font-size: 32px;
+    }
+
+    .stp-day-title {
+        font-size: 24px;
+        margin-bottom: 18px;
+    }
+
+    .stp-day-activities {
+        font-size: 16px;
+    }
+
+    .stp-day-activities ul li {
+        padding-left: 30px;
+    }
+
+    .stp-itinerary-day-item:hover {
+        transform: translateY(-4px) scale(1);
     }
 }
 

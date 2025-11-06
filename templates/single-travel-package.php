@@ -135,7 +135,7 @@ while (have_posts()) : the_post();
                                     <div class="stp-day-content">
                                         <h3 class="stp-day-title"><?php echo esc_html($day['title']); ?></h3>
                                         <div class="stp-day-activities">
-                                            <?php echo wpautop(esc_html($day['activities'])); ?>
+                                            <?php echo wp_kses_post(wpautop($day['activities'])); ?>
                                         </div>
                                     </div>
                                 </div>
