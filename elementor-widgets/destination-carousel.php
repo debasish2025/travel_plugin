@@ -163,26 +163,41 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
                     <?php while ($query->have_posts()) : $query->the_post(); ?>
                         <?php
                         $subtitle = get_post_meta(get_the_ID(), '_subtitle', true);
+                        $days = get_post_meta(get_the_ID(), '_days', true);
+                        $nights = get_post_meta(get_the_ID(), '_nights', true);
+                        $price = get_post_meta(get_the_ID(), '_price', true);
                         $border_radius = $settings['card_border_radius']['size'] . 'px';
                         ?>
-                        <div class="stp-carousel-card" style="border-radius: <?php echo esc_attr($border_radius); ?>">
-                            <div class="stp-carousel-image">
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <?php the_post_thumbnail('medium_large'); ?>
-                                <?php else : ?>
-                                    <img src="https://via.placeholder.com/400x300?text=<?php echo urlencode(get_the_title()); ?>" alt="<?php the_title(); ?>">
-                                <?php endif; ?>
-                            </div>
-                            <div class="stp-carousel-content">
-                                <h3 class="stp-carousel-title" style="color: <?php echo esc_attr($settings['card_title_color']); ?>">
-                                    <?php the_title(); ?>
-                                </h3>
-                                <?php if ($subtitle) : ?>
-                                    <p class="stp-carousel-subtitle" style="color: <?php echo esc_attr($settings['card_subtitle_color']); ?>">
-                                        <?php echo esc_html($subtitle); ?>
-                                    </p>
-                                <?php endif; ?>
-                            </div>
+                        <div class="stp-carousel-slide">
+                            <a href="<?php the_permalink(); ?>" class="stp-carousel-card" style="border-radius: <?php echo esc_attr($border_radius); ?>; text-decoration: none; display: block; color: inherit;">
+                                <div class="stp-carousel-image">
+                                    <?php if (has_post_thumbnail()) : ?>
+                                        <?php the_post_thumbnail('medium_large'); ?>
+                                    <?php else : ?>
+                                        <img src="https://via.placeholder.com/400x300?text=<?php echo urlencode(get_the_title()); ?>" alt="<?php the_title(); ?>">
+                                    <?php endif; ?>
+                                </div>
+                                <div class="stp-carousel-content">
+                                    <h3 class="stp-carousel-title" style="color: <?php echo esc_attr($settings['card_title_color']); ?>">
+                                        <?php the_title(); ?>
+                                    </h3>
+                                    <?php if ($subtitle) : ?>
+                                        <p class="stp-carousel-subtitle" style="color: <?php echo esc_attr($settings['card_subtitle_color']); ?>">
+                                            <?php echo esc_html($subtitle); ?>
+                                        </p>
+                                    <?php endif; ?>
+                                    <?php if ($days && $nights): ?>
+                                        <p class="stp-carousel-duration" style="font-size: 13px; color: #888; margin: 8px 0 0 0;">
+                                            <?php echo esc_html($days . ' Days / ' . $nights . ' Nights'); ?>
+                                        </p>
+                                    <?php endif; ?>
+                                    <?php if ($price): ?>
+                                        <p class="stp-carousel-price" style="font-size: 18px; font-weight: 600; color: #667eea; margin: 10px 0 0 0;">
+                                            From $<?php echo esc_html($price); ?>
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+                            </a>
                         </div>
                     <?php endwhile; ?>
                 </div>
@@ -191,47 +206,81 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
             </div>
             
             <script>
-            jQuery(document).ready(function($){
-                var carousel = $('.<?php echo $carousel_id; ?>');
-                var autoplay = carousel.data('autoplay') === 'yes';
-                var autoplaySpeed = carousel.data('autoplay-speed') || 3000;
-                
-                carousel.slick({
-                    slidesToShow: 5,
-                    slidesToScroll: 1,
-                    autoplay: autoplay,
-                    autoplaySpeed: autoplaySpeed,
-                    dots: true,
-                    arrows: true,
-                    appendDots: carousel.parent().find('.stp-carousel-dots'),
-                    responsive: [
-                        {
-                            breakpoint: 1200,
-                            settings: {
-                                slidesToShow: 4
+            (function($) {
+                function initCarousel_<?php echo str_replace('-', '_', $carousel_id); ?>() {
+                    var carousel = $('.<?php echo $carousel_id; ?>');
+
+                    // Check if carousel exists and Slick is available
+                    if (carousel.length === 0) {
+                        return;
+                    }
+
+                    if (typeof $.fn.slick === 'undefined') {
+                        // Retry after 100ms if Slick not loaded yet
+                        setTimeout(initCarousel_<?php echo str_replace('-', '_', $carousel_id); ?>, 100);
+                        return;
+                    }
+
+                    // Destroy existing instance if any
+                    if (carousel.hasClass('slick-initialized')) {
+                        carousel.slick('unslick');
+                    }
+
+                    var autoplay = carousel.data('autoplay') === 'yes';
+                    var autoplaySpeed = carousel.data('autoplay-speed') || 3000;
+
+                    // Initialize Slick carousel
+                    carousel.slick({
+                        slidesToShow: 4,
+                        slidesToScroll: 1,
+                        autoplay: autoplay,
+                        autoplaySpeed: autoplaySpeed,
+                        dots: true,
+                        arrows: true,
+                        infinite: true,
+                        speed: 500,
+                        cssEase: 'ease-in-out',
+                        appendDots: carousel.parent().find('.stp-carousel-dots'),
+                        prevArrow: '<button type="button" class="slick-prev">←</button>',
+                        nextArrow: '<button type="button" class="slick-next">→</button>',
+                        responsive: [
+                            {
+                                breakpoint: 1200,
+                                settings: {
+                                    slidesToShow: 3,
+                                    slidesToScroll: 1
+                                }
+                            },
+                            {
+                                breakpoint: 992,
+                                settings: {
+                                    slidesToShow: 2,
+                                    slidesToScroll: 1
+                                }
+                            },
+                            {
+                                breakpoint: 768,
+                                settings: {
+                                    slidesToShow: 1,
+                                    slidesToScroll: 1
+                                }
                             }
-                        },
-                        {
-                            breakpoint: 992,
-                            settings: {
-                                slidesToShow: 3
-                            }
-                        },
-                        {
-                            breakpoint: 768,
-                            settings: {
-                                slidesToShow: 2
-                            }
-                        },
-                        {
-                            breakpoint: 480,
-                            settings: {
-                                slidesToShow: 1
-                            }
-                        }
-                    ]
+                        ]
+                    });
+                }
+
+                // Initialize on DOM ready
+                $(document).ready(function() {
+                    initCarousel_<?php echo str_replace('-', '_', $carousel_id); ?>();
                 });
-            });
+
+                // Re-initialize for Elementor editor
+                if (typeof elementorFrontend !== 'undefined') {
+                    elementorFrontend.hooks.addAction('frontend/element_ready/widget', function() {
+                        setTimeout(initCarousel_<?php echo str_replace('-', '_', $carousel_id); ?>, 200);
+                    });
+                }
+            })(jQuery);
             </script>
             <?php
         endif;

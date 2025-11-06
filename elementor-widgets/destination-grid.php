@@ -166,8 +166,11 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
                     <?php while ($query->have_posts()) : $query->the_post(); ?>
                         <?php
                         $subtitle = get_post_meta(get_the_ID(), '_subtitle', true);
+                        $price = get_post_meta(get_the_ID(), '_price', true);
+                        $days = get_post_meta(get_the_ID(), '_days', true);
+                        $nights = get_post_meta(get_the_ID(), '_nights', true);
                         ?>
-                        <div class="stp-destination-card" style="background-color: <?php echo esc_attr($settings['card_bg_color']); ?>">
+                        <a href="<?php the_permalink(); ?>" class="stp-destination-card" style="background-color: <?php echo esc_attr($settings['card_bg_color']); ?>; text-decoration: none; color: inherit; display: block;">
                             <div class="stp-card-image">
                                 <?php if (has_post_thumbnail()) : ?>
                                     <?php the_post_thumbnail('large'); ?>
@@ -182,8 +185,18 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
                                         <?php echo esc_html($subtitle); ?>
                                     </p>
                                 <?php endif; ?>
+                                <?php if ($days && $nights): ?>
+                                    <p style="font-size: 14px; color: #888; margin: 10px 0 0 0;">
+                                        <?php echo esc_html($days . ' Days / ' . $nights . ' Nights'); ?>
+                                    </p>
+                                <?php endif; ?>
+                                <?php if ($price): ?>
+                                    <p style="font-size: 20px; font-weight: 600; color: #667eea; margin: 12px 0 0 0;">
+                                        From $<?php echo esc_html($price); ?>
+                                    </p>
+                                <?php endif; ?>
                             </div>
-                        </div>
+                        </a>
                     <?php endwhile; ?>
                 </div>
             </div>

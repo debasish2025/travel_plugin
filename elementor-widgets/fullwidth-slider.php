@@ -172,16 +172,18 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
                 <div class="stp-fullwidth-slider <?php echo esc_attr($slider_id); ?>">
                     <?php while ($query->have_posts()) : $query->the_post(); ?>
                         <div class="stp-fullwidth-slide">
-                            <div class="stp-fullwidth-image">
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <?php the_post_thumbnail('large'); ?>
-                                <?php else : ?>
-                                    <img src="https://via.placeholder.com/500x400?text=<?php echo urlencode(get_the_title()); ?>" alt="<?php the_title(); ?>">
-                                <?php endif; ?>
-                            </div>
-                            <h3 class="stp-fullwidth-title" style="color: <?php echo esc_attr($settings['title_color']); ?>">
-                                <?php the_title(); ?>
-                            </h3>
+                            <a href="<?php the_permalink(); ?>" style="text-decoration: none; color: inherit; display: block;">
+                                <div class="stp-fullwidth-image">
+                                    <?php if (has_post_thumbnail()) : ?>
+                                        <?php the_post_thumbnail('large'); ?>
+                                    <?php else : ?>
+                                        <img src="https://via.placeholder.com/500x400?text=<?php echo urlencode(get_the_title()); ?>" alt="<?php the_title(); ?>">
+                                    <?php endif; ?>
+                                </div>
+                                <h3 class="stp-fullwidth-title" style="color: <?php echo esc_attr($settings['title_color']); ?>">
+                                    <?php the_title(); ?>
+                                </h3>
+                            </a>
                         </div>
                     <?php endwhile; ?>
                 </div>

@@ -714,6 +714,39 @@
     background: #000;
 }
 
+/* Prevent vertical stacking - ensure slides display horizontally */
+.stp-carousel-slide {
+    display: inline-block;
+    width: 100%;
+}
+
+.stp-carousel .slick-track {
+    display: flex !important;
+    align-items: stretch;
+}
+
+.stp-carousel .slick-slide {
+    height: auto;
+    display: flex;
+    align-items: stretch;
+}
+
+.stp-carousel .slick-slide > div {
+    width: 100%;
+}
+
+/* Make sure links fill the card properly */
+.stp-carousel-card {
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+}
+
+.stp-carousel-card:hover {
+    text-decoration: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
 @media (max-width: 768px) {
     .stp-carousel {
         margin: 0 20px;
