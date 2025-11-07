@@ -13,7 +13,7 @@ function wedding_csv_import_menu() {
         'Import Packages (CSV)',
         '📥 Import CSV',
         'manage_options',
-        'stp-csv-import',
+        'wedding-csv-import',
         'wedding_csv_import_page'
     );
 }
@@ -58,7 +58,7 @@ function wedding_csv_import_page() {
                     </div>
                 </div>
 
-                <a href="<?php echo admin_url('admin.php?action=stp_download_csv_template'); ?>"
+                <a href="<?php echo admin_url('admin.php?action=wedding_download_csv_template'); ?>"
                    class="button button-primary button-hero stp-download-btn">
                     <span class="dashicons dashicons-download"></span>
                     Download CSV Template
@@ -96,7 +96,7 @@ function wedding_csv_import_page() {
                         </label>
                     </div>
 
-                    <button type="submit" name="import_csv" class="button button-primary button-hero stp-import-btn">
+                    <button type="submit" name="wedding_import_csv" class="button button-primary button-hero stp-import-btn">
                         <span class="dashicons dashicons-upload"></span>
                         Start Import
                     </button>
@@ -104,8 +104,8 @@ function wedding_csv_import_page() {
 
                 <?php
                 // Handle import
-                if (isset($_POST['import_csv']) && check_admin_referer('wedding_csv_import_nonce', 'wedding_csv_import_nonce')) {
-                    stp_process_csv_import();
+                if (isset($_POST['wedding_import_csv']) && check_admin_referer('wedding_csv_import_nonce', 'wedding_csv_import_nonce')) {
+                    wedding_process_csv_import();
                 }
                 ?>
             </div>
@@ -361,21 +361,21 @@ function wedding_csv_import_page() {
 }
 
 // Download CSV Template
-add_action('admin_action_stp_download_csv_template', 'stp_download_csv_template');
+add_action('admin_action_wedding_download_csv_template', 'wedding_download_csv_template');
 
-function stp_download_csv_template() {
+function wedding_download_csv_template() {
     if (!current_user_can('manage_options')) {
         wp_die('Unauthorized');
     }
 
-    $filename = 'travel-packages-import-template.csv';
+    $filename = 'wedding-packages-import-template.csv';
 
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=' . $filename);
 
     $output = fopen('php://output', 'w');
 
-    // CSV Headers with all fields
+    // CSV Headers with all fields for Wedding Packages
     $headers = array(
         'title',
         'subtitle',
@@ -384,14 +384,10 @@ function stp_download_csv_template() {
         'nights',
         'price',
         'featured_image_url',
-        'categories',
-        'package_types',
-        'activity_types',
-        'amenities',
-        'difficulty_level',
-        'season',
-        'duration',
-        'reason',
+        'categories',          // wedding_category
+        'regions',             // wedding_region
+        'duration',            // wedding_duration
+        'activity_types',      // wedding_activity
         'day_1_title',
         'day_1_activities',
         'day_2_title',
@@ -412,33 +408,26 @@ function stp_download_csv_template() {
 
     fputcsv($output, $headers);
 
-    // Sample row with instructions
+    // Sample row with wedding package example
     $sample = array(
-        'Manali Adventure Tour',
-        'Explore the Mountains',
-        '<p>Experience the beauty of <strong>Manali</strong> with our exclusive package.</p><ul><li>Mountain trekking</li><li>River rafting</li><li>Camping under stars</li></ul>',
-        '5',
-        '4',
-        '25000',
-        'https://example.com/image.jpg',
-        'Mountain Tours, Adventure',
-        'Adventure Package, Couple Package',
-        'Trekking, Rafting',
-        'WiFi, Meals Included',
-        'Moderate',
-        'Summer, Spring',
-        '5-7 Days',
-        'Adventure, Nature',
-        'Arrival in Manali',
-        '<p><strong>Morning:</strong> Arrive at Manali</p><p><strong>Afternoon:</strong> Hotel check-in</p><ul><li>Welcome drink</li><li>Briefing session</li></ul>',
-        'Solang Valley Excursion',
-        '<p>Full day at <strong>Solang Valley</strong></p><ul><li>Paragliding</li><li>Zorbing</li><li>Cable car ride</li></ul>',
-        'Rohtang Pass Visit',
-        '<p>Day trip to <em>Rohtang Pass</em></p><p>Activities include snow activities and photography</p>',
-        'Old Manali Exploration',
-        '<p>Explore <strong>Old Manali</strong> cafes and markets</p>',
-        'Departure',
-        '<p>Check-out and departure</p>',
+        'Beach Wedding in Goa',
+        'Your Dream Beach Wedding',
+        '<p>Celebrate your love with a beautiful <strong>beach wedding in Goa</strong>.</p><ul><li>Sunset ceremony on the beach</li><li>Floral decorations</li><li>Professional photography</li></ul>',
+        '3',
+        '2',
+        '150000',
+        'https://example.com/beach-wedding.jpg',
+        'Beach Wedding, Destination Wedding',
+        'Goa, India',
+        '3 Days',
+        'Photography, Decoration, Catering, Entertainment',
+        'Pre-Wedding Day',
+        '<p><strong>Morning:</strong> Arrival and hotel check-in</p><p><strong>Afternoon:</strong> Meet with wedding planner</p><ul><li>Venue walkthrough</li><li>Final arrangements</li></ul>',
+        'Wedding Day',
+        '<p><strong>Morning:</strong> Bride and groom preparations</p><p><strong>Afternoon:</strong> Beach ceremony at sunset</p><ul><li>150 guests capacity</li><li>Live music</li><li>Gourmet dinner</li></ul>',
+        'Post-Wedding Celebration',
+        '<p>Casual <strong>beach brunch</strong> with guests</p><p>Departure arrangements</p>',
+        '', '', '', '',
         '', '', '', '', '', '', '', '', '', '',
     );
 
@@ -449,7 +438,7 @@ function stp_download_csv_template() {
 }
 
 // Process CSV Import
-function stp_process_csv_import() {
+function wedding_process_csv_import() {
     if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
         echo '<div class="notice notice-error"><p>Error uploading file. Please try again.</p></div>';
         return;
@@ -509,14 +498,14 @@ function stp_process_csv_import() {
         update_post_meta($post_id, '_price', sanitize_text_field($row['price']));
 
         // Handle taxonomies
-        stp_import_handle_taxonomies($post_id, $row, $create_categories);
+        wedding_import_handle_taxonomies($post_id, $row, $create_categories);
 
         // Handle itinerary
-        stp_import_handle_itinerary($post_id, $row);
+        wedding_import_handle_itinerary($post_id, $row);
 
         // Handle featured image
         if (!empty($row['featured_image_url'])) {
-            stp_import_set_featured_image($post_id, $row['featured_image_url']);
+            wedding_import_set_featured_image($post_id, $row['featured_image_url']);
         }
 
         $imported++;
@@ -566,7 +555,7 @@ function stp_process_csv_import() {
 }
 
 // Handle taxonomies during import
-function stp_import_handle_taxonomies($post_id, $row, $create_categories) {
+function wedding_import_handle_taxonomies($post_id, $row, $create_categories) {
     $taxonomies = array(
         'categories' => 'wedding_category',
         'regions' => 'wedding_region',
@@ -600,7 +589,7 @@ function stp_import_handle_taxonomies($post_id, $row, $create_categories) {
 }
 
 // Handle itinerary during import
-function stp_import_handle_itinerary($post_id, $row) {
+function wedding_import_handle_itinerary($post_id, $row) {
     $itinerary = array();
 
     // Check for up to 15 days
@@ -624,7 +613,7 @@ function stp_import_handle_itinerary($post_id, $row) {
 }
 
 // Set featured image from URL
-function stp_import_set_featured_image($post_id, $image_url) {
+function wedding_import_set_featured_image($post_id, $image_url) {
     require_once(ABSPATH . 'wp-admin/includes/media.php');
     require_once(ABSPATH . 'wp-admin/includes/file.php');
     require_once(ABSPATH . 'wp-admin/includes/image.php');
