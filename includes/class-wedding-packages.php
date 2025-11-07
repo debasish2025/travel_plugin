@@ -36,7 +36,7 @@ class WP_Wedding_Packages {
                 'add_new' => 'Add New Wedding Package',
                 'add_new_item' => 'Add New Wedding Package',
                 'edit_item' => 'Edit Wedding Package',
-                'all_items' => 'All Wedding Packages',
+                'all_items' => 'Wedding Packages',
                 'view_item' => 'View Wedding Package',
                 'search_items' => 'Search Wedding Packages',
             ),
@@ -44,9 +44,9 @@ class WP_Wedding_Packages {
             'has_archive' => true,
             'supports' => array('title', 'editor', 'thumbnail', 'elementor'),
             'menu_icon' => 'dashicons-heart',
+            'show_in_menu' => 'wedyara',  // Show under Wedyara parent menu
             'show_in_rest' => true,
             'rewrite' => array('slug' => 'wedding-package'),
-            'menu_position' => 21,
         ));
 
         // DEBUG: Log post type registration

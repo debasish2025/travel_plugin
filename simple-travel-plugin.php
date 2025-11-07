@@ -25,28 +25,48 @@ class Simple_Travel_Plugin {
     public function __construct() {
         // Load includes
         add_action('plugins_loaded', array($this, 'load_includes'));
-        
+
+        // Register parent menu
+        add_action('admin_menu', array($this, 'register_parent_menu'));
+
         // Register post type
         add_action('init', array($this, 'register_post_type'));
-        
+
         // Add meta boxes
         add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
         add_action('save_post', array($this, 'save_package_data'));
-        
+
         // Elementor widgets
         add_action('elementor/widgets/register', array($this, 'register_elementor_widgets'));
-        
+
         // Enqueue styles
         add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
-        
+
         // Template loader
         add_filter('single_template', array($this, 'load_single_template'));
-        
+
         // Add template selection meta box
         add_action('add_meta_boxes', array($this, 'add_template_meta_box'));
-        
+
         // AJAX for AI category detection
         add_action('wp_ajax_stp_ai_detect_category', array($this, 'ai_detect_category'));
+    }
+
+    /**
+     * Register Wedyara Parent Menu
+     */
+    public function register_parent_menu() {
+        add_menu_page(
+            'Wedyara',                    // Page title
+            'Wedyara',                    // Menu title
+            'manage_options',             // Capability
+            'wedyara',                    // Menu slug
+            '',                           // Function (empty, handled by submenu)
+            'dashicons-heart',            // Icon
+            20                            // Position
+        );
+
+        error_log('===== WEDYARA DEBUG: Parent Menu Registered =====');
     }
     
     public function load_includes() {
@@ -68,19 +88,23 @@ class Simple_Travel_Plugin {
         register_post_type('travel_package', array(
             'labels' => array(
                 'name' => 'Travel Packages',
-                'singular_name' => 'Package',
+                'singular_name' => 'Travel Package',
                 'add_new' => 'Add New Package',
-                'add_new_item' => 'Add New Package',
-                'edit_item' => 'Edit Package',
+                'add_new_item' => 'Add New Travel Package',
+                'edit_item' => 'Edit Travel Package',
+                'all_items' => 'Travel Packages',
             ),
             'public' => true,
             'has_archive' => true,
             'supports' => array('title', 'editor', 'thumbnail', 'elementor'),
             'menu_icon' => 'dashicons-palmtree',
+            'show_in_menu' => 'wedyara',  // Show under Wedyara parent menu
             'show_in_rest' => true,
             'rewrite' => array('slug' => 'package'),
             'taxonomies' => array('package_category'), // Keep for backward compatibility
         ));
+
+        error_log('===== WEDYARA DEBUG: Travel Package Post Type Registered Under Wedyara Menu =====');
         
         /* 
          * OLD SIMPLE CATEGORY REGISTRATION - COMMENTED OUT
@@ -346,7 +370,7 @@ class Simple_Travel_Plugin {
     }
     
     public function register_elementor_widgets($widgets_manager) {
-        // Travel Package Widgets
+        // Unified Package Widgets (work for both Travel and Wedding packages)
         require_once STP_PATH . 'elementor-widgets/destination-grid.php';
         require_once STP_PATH . 'elementor-widgets/destination-carousel.php';
         require_once STP_PATH . 'elementor-widgets/fullwidth-slider.php';
@@ -355,14 +379,9 @@ class Simple_Travel_Plugin {
         $widgets_manager->register(new \Elementor_Destination_Carousel_Widget());
         $widgets_manager->register(new \Elementor_Fullwidth_Slider_Widget());
 
-        // Wedding Package Widgets
-        require_once STP_PATH . 'elementor-widgets/wedding-carousel.php';
-        require_once STP_PATH . 'elementor-widgets/wedding-grid.php';
-        require_once STP_PATH . 'elementor-widgets/wedding-slider.php';
-
-        $widgets_manager->register(new \Elementor_Wedding_Carousel_Widget());
-        $widgets_manager->register(new \Elementor_Wedding_Grid_Widget());
-        $widgets_manager->register(new \Elementor_Wedding_Slider_Widget());
+        error_log('===== WEDYARA DEBUG: Unified Widgets Registered =====');
+        error_log('3 widgets registered: Package Grid, Package Carousel, Package Slider');
+        error_log('Each widget supports both Travel and Wedding packages via Package Type selector');
     }
     
     public function enqueue_styles() {

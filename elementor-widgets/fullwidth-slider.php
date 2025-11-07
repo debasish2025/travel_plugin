@@ -9,11 +9,11 @@ if (!defined('ABSPATH')) exit;
 class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
 
     public function get_name() {
-        return 'wedyara_fullwidth_slider';
+        return 'wedyara_package_slider';
     }
 
     public function get_title() {
-        return 'Wedyara - Full Width Slider';
+        return 'Wedyara - Package Slider';
     }
 
     public function get_icon() {
@@ -37,6 +37,21 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        // Package Type Selector
+        $this->add_control(
+            'package_type',
+            [
+                'label' => 'Package Type',
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    'travel_package' => 'Travel Packages',
+                    'wedding_package' => 'Wedding Packages',
+                ],
+                'default' => 'travel_package',
+                'description' => 'Choose which type of package to display',
+            ]
+        );
+
         $this->add_control(
             'categories',
             [
@@ -51,6 +66,24 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
                     'allowClear' => true,
                 ],
                 'description' => 'Select one or more categories. Leave empty to show all packages.',
+            ]
+        );
+
+        // Region Filter
+        $this->add_control(
+            'regions',
+            [
+                'label' => 'Select Regions',
+                'type' => \Elementor\Controls_Manager::SELECT2,
+                'multiple' => true,
+                'options' => $this->get_package_regions(),
+                'default' => [],
+                'label_block' => true,
+                'select2options' => [
+                    'placeholder' => 'Select regions...',
+                    'allowClear' => true,
+                ],
+                'description' => 'Select one or more regions. Leave empty to show all regions.',
             ]
         );
 
@@ -476,27 +509,76 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
     }
 
     private function get_package_categories() {
-        $categories = get_terms(array(
+        // Get both travel and wedding categories
+        $travel_categories = get_terms(array(
             'taxonomy' => 'tpm_category',
             'hide_empty' => false,
         ));
 
-        // DEBUG: Log to WordPress debug.log
+        $wedding_categories = get_terms(array(
+            'taxonomy' => 'wedding_category',
+            'hide_empty' => false,
+        ));
+
         error_log('===== WEDYARA SLIDER DEBUG: get_package_categories =====');
-        error_log('Categories found: ' . print_r($categories, true));
-        error_log('Is WP_Error: ' . (is_wp_error($categories) ? 'YES' : 'NO'));
-        error_log('Count: ' . (is_array($categories) ? count($categories) : '0'));
 
         $options = array();
 
-        if (!is_wp_error($categories) && !empty($categories)) {
-            foreach ($categories as $cat) {
-                $options[$cat->term_id] = $cat->name;
-                error_log('Category loaded: ID=' . $cat->term_id . ' Name=' . $cat->name);
+        // Add travel categories with prefix
+        if (!is_wp_error($travel_categories) && !empty($travel_categories)) {
+            foreach ($travel_categories as $cat) {
+                $options['travel_' . $cat->term_id] = '🏝️ ' . $cat->name . ' (Travel)';
+                error_log('Travel Category: ID=' . $cat->term_id . ' Name=' . $cat->name);
             }
         }
 
-        error_log('Final options array: ' . print_r($options, true));
+        // Add wedding categories with prefix
+        if (!is_wp_error($wedding_categories) && !empty($wedding_categories)) {
+            foreach ($wedding_categories as $cat) {
+                $options['wedding_' . $cat->term_id] = '💒 ' . $cat->name . ' (Wedding)';
+                error_log('Wedding Category: ID=' . $cat->term_id . ' Name=' . $cat->name);
+            }
+        }
+
+        error_log('Total categories: ' . count($options));
+        error_log('===== END DEBUG =====');
+
+        return $options;
+    }
+
+    private function get_package_regions() {
+        // Get both travel and wedding regions
+        $travel_regions = get_terms(array(
+            'taxonomy' => 'tpm_region',
+            'hide_empty' => false,
+        ));
+
+        $wedding_regions = get_terms(array(
+            'taxonomy' => 'wedding_region',
+            'hide_empty' => false,
+        ));
+
+        error_log('===== WEDYARA SLIDER DEBUG: get_package_regions =====');
+
+        $options = array();
+
+        // Add travel regions with prefix
+        if (!is_wp_error($travel_regions) && !empty($travel_regions)) {
+            foreach ($travel_regions as $region) {
+                $options['travel_' . $region->term_id] = '🏝️ ' . $region->name . ' (Travel)';
+                error_log('Travel Region: ID=' . $region->term_id . ' Name=' . $region->name);
+            }
+        }
+
+        // Add wedding regions with prefix
+        if (!is_wp_error($wedding_regions) && !empty($wedding_regions)) {
+            foreach ($wedding_regions as $region) {
+                $options['wedding_' . $region->term_id] = '💒 ' . $region->name . ' (Wedding)';
+                error_log('Wedding Region: ID=' . $region->term_id . ' Name=' . $region->name);
+            }
+        }
+
+        error_log('Total regions: ' . count($options));
         error_log('===== END DEBUG =====');
 
         return $options;
@@ -505,42 +587,90 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
     protected function render() {
         $settings = $this->get_settings_for_display();
 
+        // Get package type (travel_package or wedding_package)
+        $package_type = isset($settings['package_type']) ? $settings['package_type'] : 'travel_package';
+
+        // Determine taxonomy names based on package type
+        $category_taxonomy = ($package_type === 'wedding_package') ? 'wedding_category' : 'tpm_category';
+        $region_taxonomy = ($package_type === 'wedding_package') ? 'wedding_region' : 'tpm_region';
+
         // Build query arguments
         $args = array(
-            'post_type' => 'travel_package',
+            'post_type' => $package_type,
             'posts_per_page' => $settings['posts_per_page'],
             'orderby' => $settings['orderby'],
             'order' => $settings['order'],
             'post_status' => 'publish',
         );
 
-        // Category filter - SIMPLE AND WORKING
-        $selected_categories = isset($settings['categories']) ? $settings['categories'] : array();
-
-        // DEBUG: Log selected categories
+        // DEBUG: Log settings
         error_log('===== WEDYARA SLIDER DEBUG: RENDER =====');
-        error_log('Raw settings[categories]: ' . print_r($settings['categories'], true));
-        error_log('Selected categories after isset: ' . print_r($selected_categories, true));
+        error_log('Package Type: ' . $package_type);
+        error_log('Category Taxonomy: ' . $category_taxonomy);
+        error_log('Region Taxonomy: ' . $region_taxonomy);
+        error_log('Raw categories: ' . print_r($settings['categories'], true));
+        error_log('Raw regions: ' . print_r($settings['regions'], true));
 
-        // Remove empty values
+        // Build tax_query array
+        $tax_query = array('relation' => 'AND');
+
+        // Category filter
+        $selected_categories = isset($settings['categories']) ? $settings['categories'] : array();
         if (is_array($selected_categories)) {
             $selected_categories = array_filter($selected_categories);
-            error_log('After array_filter: ' . print_r($selected_categories, true));
+
+            // Extract term IDs based on package type
+            $category_term_ids = array();
+            $prefix = ($package_type === 'wedding_package') ? 'wedding_' : 'travel_';
+
+            foreach ($selected_categories as $cat) {
+                if (strpos($cat, $prefix) === 0) {
+                    $term_id = intval(str_replace($prefix, '', $cat));
+                    $category_term_ids[] = $term_id;
+                }
+            }
+
+            if (!empty($category_term_ids)) {
+                error_log('Applying category filter: ' . print_r($category_term_ids, true));
+                $tax_query[] = array(
+                    'taxonomy' => $category_taxonomy,
+                    'field' => 'term_id',
+                    'terms' => $category_term_ids,
+                    'operator' => 'IN',
+                );
+            }
         }
 
-        // Apply filter if categories are selected
-        if (!empty($selected_categories)) {
-            error_log('APPLYING CATEGORY FILTER with terms: ' . print_r($selected_categories, true));
-            $args['tax_query'] = array(
-                array(
-                    'taxonomy' => 'tpm_category',
+        // Region filter
+        $selected_regions = isset($settings['regions']) ? $settings['regions'] : array();
+        if (is_array($selected_regions)) {
+            $selected_regions = array_filter($selected_regions);
+
+            // Extract term IDs based on package type
+            $region_term_ids = array();
+            $prefix = ($package_type === 'wedding_package') ? 'wedding_' : 'travel_';
+
+            foreach ($selected_regions as $region) {
+                if (strpos($region, $prefix) === 0) {
+                    $term_id = intval(str_replace($prefix, '', $region));
+                    $region_term_ids[] = $term_id;
+                }
+            }
+
+            if (!empty($region_term_ids)) {
+                error_log('Applying region filter: ' . print_r($region_term_ids, true));
+                $tax_query[] = array(
+                    'taxonomy' => $region_taxonomy,
                     'field' => 'term_id',
-                    'terms' => $selected_categories,
+                    'terms' => $region_term_ids,
                     'operator' => 'IN',
-                )
-            );
-        } else {
-            error_log('NO CATEGORIES SELECTED - showing all packages');
+                );
+            }
+        }
+
+        // Add tax_query to args if we have filters
+        if (count($tax_query) > 1) {
+            $args['tax_query'] = $tax_query;
         }
 
         error_log('Final WP_Query args: ' . print_r($args, true));
@@ -549,6 +679,14 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
         $query = new WP_Query($args);
 
         error_log('Query found posts: ' . $query->found_posts);
+
+        // Console log for frontend debugging
+        echo '<script>console.log("WEDYARA DEBUG: Package Slider", ' . wp_json_encode(array(
+            'package_type' => $package_type,
+            'category_taxonomy' => $category_taxonomy,
+            'region_taxonomy' => $region_taxonomy,
+            'found_posts' => $query->found_posts,
+        )) . ');</script>';
 
         if ($query->have_posts()) :
             $slider_id = 'wedyara-fullwidth-slider-' . uniqid();
