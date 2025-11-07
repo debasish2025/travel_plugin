@@ -803,13 +803,23 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
             'hide_empty' => false,
         ));
 
+        // DEBUG: Log to WordPress debug.log
+        error_log('===== WEDYARA GRID DEBUG: get_package_categories =====');
+        error_log('Categories found: ' . print_r($categories, true));
+        error_log('Is WP_Error: ' . (is_wp_error($categories) ? 'YES' : 'NO'));
+        error_log('Count: ' . (is_array($categories) ? count($categories) : '0'));
+
         $options = array();
 
         if (!is_wp_error($categories) && !empty($categories)) {
             foreach ($categories as $cat) {
                 $options[$cat->term_id] = $cat->name;
+                error_log('Category loaded: ID=' . $cat->term_id . ' Name=' . $cat->name);
             }
         }
+
+        error_log('Final options array: ' . print_r($options, true));
+        error_log('===== END DEBUG =====');
 
         return $options;
     }
@@ -829,13 +839,20 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
         // Category filter - SIMPLE AND WORKING
         $selected_categories = isset($settings['categories']) ? $settings['categories'] : array();
 
+        // DEBUG: Log selected categories
+        error_log('===== WEDYARA GRID DEBUG: RENDER =====');
+        error_log('Raw settings[categories]: ' . print_r($settings['categories'], true));
+        error_log('Selected categories after isset: ' . print_r($selected_categories, true));
+
         // Remove empty values
         if (is_array($selected_categories)) {
             $selected_categories = array_filter($selected_categories);
+            error_log('After array_filter: ' . print_r($selected_categories, true));
         }
 
         // Apply filter if categories are selected
         if (!empty($selected_categories)) {
+            error_log('APPLYING CATEGORY FILTER with terms: ' . print_r($selected_categories, true));
             $args['tax_query'] = array(
                 array(
                     'taxonomy' => 'package_category',
@@ -844,9 +861,16 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
                     'operator' => 'IN',
                 )
             );
+        } else {
+            error_log('NO CATEGORIES SELECTED - showing all packages');
         }
 
+        error_log('Final WP_Query args: ' . print_r($args, true));
+        error_log('===== END DEBUG =====');
+
         $query = new WP_Query($args);
+
+        error_log('Query found posts: ' . $query->found_posts);
 
         if ($query->have_posts()) :
             $grid_id = 'wedyara-grid-' . uniqid();
