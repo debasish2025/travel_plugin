@@ -33,6 +33,7 @@ function stp_add_featured_image_column($columns) {
     return $new_columns;
 }
 add_filter('manage_travel_package_posts_columns', 'stp_add_featured_image_column');
+add_filter('manage_wedding_package_posts_columns', 'stp_add_featured_image_column');
 
 /**
  * Display featured image with quick upload button
@@ -89,6 +90,7 @@ function stp_display_featured_image_column($column, $post_id) {
     }
 }
 add_action('manage_travel_package_posts_custom_column', 'stp_display_featured_image_column', 10, 2);
+add_action('manage_wedding_package_posts_custom_column', 'stp_display_featured_image_column', 10, 2);
 
 /**
  * Make featured image column sortable
@@ -98,13 +100,14 @@ function stp_make_featured_image_sortable($columns) {
     return $columns;
 }
 add_filter('manage_edit-travel_package_sortable_columns', 'stp_make_featured_image_sortable');
+add_filter('manage_edit-wedding_package_sortable_columns', 'stp_make_featured_image_sortable');
 
 /**
  * Enqueue scripts for quick upload
  */
 function stp_enqueue_quick_upload_scripts($hook) {
-    // Only load on packages list page
-    if ($hook !== 'edit.php' || !isset($_GET['post_type']) || $_GET['post_type'] !== 'travel_package') {
+    // Only load on packages list page (travel or wedding)
+    if ($hook !== 'edit.php' || !isset($_GET['post_type']) || !in_array($_GET['post_type'], ['travel_package', 'wedding_package'])) {
         return;
     }
 
@@ -289,7 +292,7 @@ add_action('wp_ajax_stp_toggle_status', 'stp_ajax_toggle_status');
 function stp_add_bulk_upload_notice() {
     $screen = get_current_screen();
 
-    if ($screen->id !== 'edit-travel_package') {
+    if (!in_array($screen->id, ['edit-travel_package', 'edit-wedding_package'])) {
         return;
     }
 
