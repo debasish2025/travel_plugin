@@ -2196,23 +2196,29 @@
     text-decoration: none;
 }
 
-/* Image Container */
+/* Image Container - Using Background Image for Consistent Heights */
 .wedyara-carousel-image {
     position: relative;
     width: 100%;
     height: 250px;
     overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: transform 0.4s ease, background-size 0.4s ease;
 }
 
+/* Hover Effect - Zoom Background Image */
+.wedyara-carousel-card:hover .wedyara-carousel-image {
+    background-size: 110%;
+}
+
+/* Legacy img tag support (if any remain) */
 .wedyara-carousel-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.4s ease;
-}
-
-.wedyara-carousel-card:hover .wedyara-carousel-image img {
-    transform: scale(1.08);
 }
 
 /* Content Container */

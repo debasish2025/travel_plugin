@@ -592,14 +592,62 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
 
         if (!is_wp_error($categories) && !empty($categories)) {
             foreach ($categories as $cat) {
-                $options[$cat->term_id] = $cat->name;
+                // Include post count for better visibility
+                $count = $cat->count;
+                $options[$cat->term_id] = $cat->name . ' (' . $count . ' packages)';
             }
         } else {
-            // If no categories exist, show a helpful message
-            $options = array('' => 'No categories found - Please create categories first');
+            // Check if it's an error or just empty
+            if (is_wp_error($categories)) {
+                error_log('Wedyara Widget Error: ' . $categories->get_error_message());
+            }
+
+            // Auto-create sample categories if none exist
+            $this->maybe_create_sample_categories();
+
+            // Try again after creating samples
+            $categories = get_terms(array(
+                'taxonomy' => 'package_category',
+                'hide_empty' => false,
+                'orderby' => 'name',
+                'order' => 'ASC',
+            ));
+
+            if (!is_wp_error($categories) && !empty($categories)) {
+                foreach ($categories as $cat) {
+                    $count = $cat->count;
+                    $options[$cat->term_id] = $cat->name . ' (' . $count . ' packages)';
+                }
+            }
         }
 
         return $options;
+    }
+
+    private function maybe_create_sample_categories() {
+        // Only create if no categories exist at all
+        $existing = get_terms(array(
+            'taxonomy' => 'package_category',
+            'hide_empty' => false,
+            'fields' => 'count',
+        ));
+
+        if ($existing == 0) {
+            $sample_categories = array(
+                'Beach Destinations',
+                'Mountain Trips',
+                'City Tours',
+                'Honeymoon Packages',
+                'Adventure Travel',
+                'Family Vacations',
+            );
+
+            foreach ($sample_categories as $cat_name) {
+                if (!term_exists($cat_name, 'package_category')) {
+                    wp_insert_term($cat_name, 'package_category');
+                }
+            }
+        }
     }
 
     protected function render() {
@@ -653,14 +701,13 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
                             ?>
                             <div class="swiper-slide">
                                 <a href="<?php the_permalink(); ?>" class="wedyara-carousel-card">
-                                    <div class="wedyara-carousel-image">
-                                        <?php if (has_post_thumbnail()) : ?>
-                                            <?php the_post_thumbnail('medium_large'); ?>
-                                        <?php else : ?>
-                                            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px; font-weight: bold;">
-                                                <?php echo esc_html(substr(get_the_title(), 0, 1)); ?>
-                                            </div>
-                                        <?php endif; ?>
+                                    <div class="wedyara-carousel-image" style="background-image: url('<?php
+                                        if (has_post_thumbnail()) {
+                                            echo esc_url(get_the_post_thumbnail_url(get_the_ID(), 'medium_large'));
+                                        } else {
+                                            echo 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Cdefs%3E%3ClinearGradient id=\'grad\' x1=\'0%25\' y1=\'0%25\' x2=\'100%25\' y2=\'100%25\'%3E%3Cstop offset=\'0%25\' style=\'stop-color:%23667eea;stop-opacity:1\' /%3E%3Cstop offset=\'100%25\' style=\'stop-color:%23764ba2;stop-opacity:1\' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill=\'url(%23grad)\' width=\'400\' height=\'300\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' font-family=\'Arial\' font-size=\'72\' fill=\'white\' text-anchor=\'middle\' dy=\'.3em\'%3E' . esc_html(substr(get_the_title(), 0, 1)) . '%3C/text%3E%3C/svg%3E';
+                                        }
+                                    ?>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
                                     </div>
                                     <div class="wedyara-carousel-content">
                                         <h3 class="wedyara-carousel-title">
