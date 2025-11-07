@@ -588,70 +588,17 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
         $categories = get_terms(array(
             'taxonomy' => 'package_category',
             'hide_empty' => false,
-            'orderby' => 'name',
-            'order' => 'ASC',
         ));
 
         $options = array();
 
         if (!is_wp_error($categories) && !empty($categories)) {
             foreach ($categories as $cat) {
-                // Include post count for better visibility
-                $count = $cat->count;
-                $options[$cat->term_id] = $cat->name . ' (' . $count . ' packages)';
-            }
-        } else {
-            // Check if it's an error or just empty
-            if (is_wp_error($categories)) {
-                error_log('Wedyara Widget Error: ' . $categories->get_error_message());
-            }
-
-            // Auto-create sample categories if none exist
-            $this->maybe_create_sample_categories();
-
-            // Try again after creating samples
-            $categories = get_terms(array(
-                'taxonomy' => 'package_category',
-                'hide_empty' => false,
-                'orderby' => 'name',
-                'order' => 'ASC',
-            ));
-
-            if (!is_wp_error($categories) && !empty($categories)) {
-                foreach ($categories as $cat) {
-                    $count = $cat->count;
-                    $options[$cat->term_id] = $cat->name . ' (' . $count . ' packages)';
-                }
+                $options[$cat->term_id] = $cat->name;
             }
         }
 
         return $options;
-    }
-
-    private function maybe_create_sample_categories() {
-        // Only create if no categories exist at all
-        $existing = get_terms(array(
-            'taxonomy' => 'package_category',
-            'hide_empty' => false,
-            'fields' => 'count',
-        ));
-
-        if ($existing == 0) {
-            $sample_categories = array(
-                'Beach Destinations',
-                'Mountain Trips',
-                'City Tours',
-                'Honeymoon Packages',
-                'Adventure Travel',
-                'Family Vacations',
-            );
-
-            foreach ($sample_categories as $cat_name) {
-                if (!term_exists($cat_name, 'package_category')) {
-                    wp_insert_term($cat_name, 'package_category');
-                }
-            }
-        }
     }
 
     protected function render() {
