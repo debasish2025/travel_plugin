@@ -438,10 +438,14 @@ class Simple_Travel_Plugin {
         require_once STP_PATH . 'elementor-widgets/destination-grid.php';
         require_once STP_PATH . 'elementor-widgets/destination-carousel.php';
         require_once STP_PATH . 'elementor-widgets/fullwidth-slider.php';
+        require_once STP_PATH . 'elementor-widgets/selected-packages-carousel.php';
 
         $widgets_manager->register(new \Elementor_Destination_Grid_Widget());
         $widgets_manager->register(new \Elementor_Destination_Carousel_Widget());
         $widgets_manager->register(new \Elementor_Fullwidth_Slider_Widget());
+        $widgets_manager->register(new \Elementor_Selected_Packages_Carousel_Widget());
+
+        error_log('WEDYARA: Elementor widgets registered (4 widgets)');
     }
     
     public function enqueue_styles() {
