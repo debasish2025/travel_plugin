@@ -870,20 +870,21 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
             'post_status' => 'publish',
         );
 
-        // FIXED: Proper category filter handling
-        // Check if categories is an array with actual values
-        if (isset($settings['categories']) && is_array($settings['categories']) && !empty($settings['categories'])) {
-            // Filter out empty strings and ensure we have valid term IDs
-            $valid_categories = array_filter($settings['categories'], function($cat) {
-                return !empty($cat) && is_numeric($cat);
-            });
+        // Category filter - simple and reliable
+        if (isset($settings['categories']) && is_array($settings['categories'])) {
+            $valid_cats = array();
+            foreach ($settings['categories'] as $cat) {
+                if (!empty($cat) && is_numeric($cat)) {
+                    $valid_cats[] = intval($cat);
+                }
+            }
 
-            if (!empty($valid_categories)) {
+            if (!empty($valid_cats)) {
                 $args['tax_query'] = array(
                     array(
                         'taxonomy' => 'package_category',
                         'field' => 'term_id',
-                        'terms' => $valid_categories,
+                        'terms' => $valid_cats,
                         'operator' => 'IN',
                     )
                 );
