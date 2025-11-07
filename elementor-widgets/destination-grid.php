@@ -84,13 +84,14 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        // Travel Categories
         $this->add_control(
-            'categories',
+            'travel_categories',
             [
                 'label' => 'Select Categories',
                 'type' => \Elementor\Controls_Manager::SELECT2,
                 'multiple' => true,
-                'options' => $this->get_package_categories(),
+                'options' => $this->get_travel_categories(),
                 'default' => [],
                 'label_block' => true,
                 'select2options' => [
@@ -98,17 +99,37 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
                     'allowClear' => true,
                 ],
                 'description' => 'Select one or more categories. Leave empty to show all packages.',
+                'condition' => ['package_type' => 'travel_package'],
             ]
         );
 
-        // Region Filter
+        // Wedding Categories
         $this->add_control(
-            'regions',
+            'wedding_categories',
+            [
+                'label' => 'Select Categories',
+                'type' => \Elementor\Controls_Manager::SELECT2,
+                'multiple' => true,
+                'options' => $this->get_wedding_categories(),
+                'default' => [],
+                'label_block' => true,
+                'select2options' => [
+                    'placeholder' => 'Select categories...',
+                    'allowClear' => true,
+                ],
+                'description' => 'Select one or more categories. Leave empty to show all packages.',
+                'condition' => ['package_type' => 'wedding_package'],
+            ]
+        );
+
+        // Travel Regions
+        $this->add_control(
+            'travel_regions',
             [
                 'label' => 'Select Regions',
                 'type' => \Elementor\Controls_Manager::SELECT2,
                 'multiple' => true,
-                'options' => $this->get_package_regions(),
+                'options' => $this->get_travel_regions(),
                 'default' => [],
                 'label_block' => true,
                 'select2options' => [
@@ -116,6 +137,26 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
                     'allowClear' => true,
                 ],
                 'description' => 'Select one or more regions. Leave empty to show all regions.',
+                'condition' => ['package_type' => 'travel_package'],
+            ]
+        );
+
+        // Wedding Regions
+        $this->add_control(
+            'wedding_regions',
+            [
+                'label' => 'Select Regions',
+                'type' => \Elementor\Controls_Manager::SELECT2,
+                'multiple' => true,
+                'options' => $this->get_wedding_regions(),
+                'default' => [],
+                'label_block' => true,
+                'select2options' => [
+                    'placeholder' => 'Select regions...',
+                    'allowClear' => true,
+                ],
+                'description' => 'Select one or more regions. Leave empty to show all regions.',
+                'condition' => ['package_type' => 'wedding_package'],
             ]
         );
 
@@ -830,93 +871,81 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
         $this->end_controls_section();
     }
 
-    private function get_package_categories() {
-        // Get both travel and wedding categories
-        $travel_categories = get_terms(array(
+    private function get_travel_categories() {
+        $categories = get_terms(array(
             'taxonomy' => 'tpm_category',
-            'hide_empty' => false,
+            'hide_empty' => true,
         ));
-
-        $wedding_categories = get_terms(array(
-            'taxonomy' => 'wedding_category',
-            'hide_empty' => false,
-        ));
-
-        error_log('===== WEDYARA GRID DEBUG: get_package_categories =====');
-
         $options = array();
-
-        // Add travel categories with prefix
-        if (!is_wp_error($travel_categories) && !empty($travel_categories)) {
-            foreach ($travel_categories as $cat) {
-                $options['travel_' . $cat->term_id] = '🏝️ ' . $cat->name . ' (Travel)';
-                error_log('Travel Category: ID=' . $cat->term_id . ' Name=' . $cat->name);
+        if (!is_wp_error($categories) && !empty($categories)) {
+            foreach ($categories as $cat) {
+                $options[$cat->term_id] = $cat->name . ' (' . $cat->count . ')';
             }
         }
-
-        // Add wedding categories with prefix
-        if (!is_wp_error($wedding_categories) && !empty($wedding_categories)) {
-            foreach ($wedding_categories as $cat) {
-                $options['wedding_' . $cat->term_id] = '💒 ' . $cat->name . ' (Wedding)';
-                error_log('Wedding Category: ID=' . $cat->term_id . ' Name=' . $cat->name);
-            }
-        }
-
-        error_log('Total categories: ' . count($options));
-        error_log('===== END DEBUG =====');
-
         return $options;
     }
 
-    private function get_package_regions() {
-        // Get both travel and wedding regions
-        $travel_regions = get_terms(array(
-            'taxonomy' => 'tpm_region',
-            'hide_empty' => false,
+    private function get_wedding_categories() {
+        $categories = get_terms(array(
+            'taxonomy' => 'wedding_category',
+            'hide_empty' => true,
         ));
-
-        $wedding_regions = get_terms(array(
-            'taxonomy' => 'wedding_region',
-            'hide_empty' => false,
-        ));
-
-        error_log('===== WEDYARA GRID DEBUG: get_package_regions =====');
-
         $options = array();
-
-        // Add travel regions with prefix
-        if (!is_wp_error($travel_regions) && !empty($travel_regions)) {
-            foreach ($travel_regions as $region) {
-                $options['travel_' . $region->term_id] = '🏝️ ' . $region->name . ' (Travel)';
-                error_log('Travel Region: ID=' . $region->term_id . ' Name=' . $region->name);
+        if (!is_wp_error($categories) && !empty($categories)) {
+            foreach ($categories as $cat) {
+                $options[$cat->term_id] = $cat->name . ' (' . $cat->count . ')';
             }
         }
+        return $options;
+    }
 
-        // Add wedding regions with prefix
-        if (!is_wp_error($wedding_regions) && !empty($wedding_regions)) {
-            foreach ($wedding_regions as $region) {
-                $options['wedding_' . $region->term_id] = '💒 ' . $region->name . ' (Wedding)';
-                error_log('Wedding Region: ID=' . $region->term_id . ' Name=' . $region->name);
+    private function get_travel_regions() {
+        $regions = get_terms(array(
+            'taxonomy' => 'tpm_region',
+            'hide_empty' => true,
+        ));
+        $options = array();
+        if (!is_wp_error($regions) && !empty($regions)) {
+            foreach ($regions as $region) {
+                $options[$region->term_id] = $region->name . ' (' . $region->count . ')';
             }
         }
+        return $options;
+    }
 
-        error_log('Total regions: ' . count($options));
-        error_log('===== END DEBUG =====');
-
+    private function get_wedding_regions() {
+        $regions = get_terms(array(
+            'taxonomy' => 'wedding_region',
+            'hide_empty' => true,
+        ));
+        $options = array();
+        if (!is_wp_error($regions) && !empty($regions)) {
+            foreach ($regions as $region) {
+                $options[$region->term_id] = $region->name . ' (' . $region->count . ')';
+            }
+        }
         return $options;
     }
 
     protected function render() {
         $settings = $this->get_settings_for_display();
 
-        // Get package type (travel_package or wedding_package)
+        // Get package type
         $package_type = isset($settings['package_type']) ? $settings['package_type'] : 'travel_package';
 
-        // Determine taxonomy names based on package type
-        $category_taxonomy = ($package_type === 'wedding_package') ? 'wedding_category' : 'tpm_category';
-        $region_taxonomy = ($package_type === 'wedding_package') ? 'wedding_region' : 'tpm_region';
+        // Determine taxonomy names and get selected filters based on package type
+        if ($package_type === 'wedding_package') {
+            $category_taxonomy = 'wedding_category';
+            $region_taxonomy = 'wedding_region';
+            $selected_categories = isset($settings['wedding_categories']) ? $settings['wedding_categories'] : array();
+            $selected_regions = isset($settings['wedding_regions']) ? $settings['wedding_regions'] : array();
+        } else {
+            $category_taxonomy = 'tpm_category';
+            $region_taxonomy = 'tpm_region';
+            $selected_categories = isset($settings['travel_categories']) ? $settings['travel_categories'] : array();
+            $selected_regions = isset($settings['travel_regions']) ? $settings['travel_regions'] : array();
+        }
 
-        // Build query arguments
         $args = array(
             'post_type' => $package_type,
             'posts_per_page' => $settings['posts_per_page'],
@@ -925,69 +954,27 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
             'post_status' => 'publish',
         );
 
-        // DEBUG: Log settings
-        error_log('===== WEDYARA GRID DEBUG: RENDER =====');
-        error_log('Package Type: ' . $package_type);
-        error_log('Category Taxonomy: ' . $category_taxonomy);
-        error_log('Region Taxonomy: ' . $region_taxonomy);
-        error_log('Raw categories: ' . print_r($settings['categories'], true));
-        error_log('Raw regions: ' . print_r($settings['regions'], true));
-
         // Build tax_query array
         $tax_query = array('relation' => 'AND');
 
         // Category filter
-        $selected_categories = isset($settings['categories']) ? $settings['categories'] : array();
-        if (is_array($selected_categories)) {
-            $selected_categories = array_filter($selected_categories);
-
-            // Extract term IDs based on package type
-            $category_term_ids = array();
-            $prefix = ($package_type === 'wedding_package') ? 'wedding_' : 'travel_';
-
-            foreach ($selected_categories as $cat) {
-                if (strpos($cat, $prefix) === 0) {
-                    $term_id = intval(str_replace($prefix, '', $cat));
-                    $category_term_ids[] = $term_id;
-                }
-            }
-
-            if (!empty($category_term_ids)) {
-                error_log('Applying category filter: ' . print_r($category_term_ids, true));
-                $tax_query[] = array(
-                    'taxonomy' => $category_taxonomy,
-                    'field' => 'term_id',
-                    'terms' => $category_term_ids,
-                    'operator' => 'IN',
-                );
-            }
+        if (is_array($selected_categories) && !empty(array_filter($selected_categories))) {
+            $tax_query[] = array(
+                'taxonomy' => $category_taxonomy,
+                'field' => 'term_id',
+                'terms' => array_filter($selected_categories),
+                'operator' => 'IN',
+            );
         }
 
         // Region filter
-        $selected_regions = isset($settings['regions']) ? $settings['regions'] : array();
-        if (is_array($selected_regions)) {
-            $selected_regions = array_filter($selected_regions);
-
-            // Extract term IDs based on package type
-            $region_term_ids = array();
-            $prefix = ($package_type === 'wedding_package') ? 'wedding_' : 'travel_';
-
-            foreach ($selected_regions as $region) {
-                if (strpos($region, $prefix) === 0) {
-                    $term_id = intval(str_replace($prefix, '', $region));
-                    $region_term_ids[] = $term_id;
-                }
-            }
-
-            if (!empty($region_term_ids)) {
-                error_log('Applying region filter: ' . print_r($region_term_ids, true));
-                $tax_query[] = array(
-                    'taxonomy' => $region_taxonomy,
-                    'field' => 'term_id',
-                    'terms' => $region_term_ids,
-                    'operator' => 'IN',
-                );
-            }
+        if (is_array($selected_regions) && !empty(array_filter($selected_regions))) {
+            $tax_query[] = array(
+                'taxonomy' => $region_taxonomy,
+                'field' => 'term_id',
+                'terms' => array_filter($selected_regions),
+                'operator' => 'IN',
+            );
         }
 
         // Add tax_query to args if we have filters
@@ -995,20 +982,12 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
             $args['tax_query'] = $tax_query;
         }
 
-        error_log('Final WP_Query args: ' . print_r($args, true));
-        error_log('===== END DEBUG =====');
-
         $query = new WP_Query($args);
 
-        error_log('Query found posts: ' . $query->found_posts);
-
-        // Console log for frontend debugging
-        echo '<script>console.log("WEDYARA DEBUG: Package Grid", ' . wp_json_encode(array(
-            'package_type' => $package_type,
-            'category_taxonomy' => $category_taxonomy,
-            'region_taxonomy' => $region_taxonomy,
-            'found_posts' => $query->found_posts,
-        )) . ');</script>';
+        // Only log errors
+        if (is_wp_error($query)) {
+            error_log('WEDYARA ERROR: Grid query failed - ' . $query->get_error_message());
+        }
 
         if ($query->have_posts()) :
             $grid_id = 'wedyara-grid-' . uniqid();

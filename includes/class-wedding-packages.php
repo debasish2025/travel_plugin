@@ -44,13 +44,10 @@ class WP_Wedding_Packages {
             'has_archive' => true,
             'supports' => array('title', 'editor', 'thumbnail', 'elementor'),
             'menu_icon' => 'dashicons-heart',
-            'show_in_menu' => 'wedyara',  // Show under Wedyara parent menu
+            'show_in_menu' => 'edit.php?post_type=travel_package',  // Show under Wedyara menu
             'show_in_rest' => true,
             'rewrite' => array('slug' => 'wedding-package'),
         ));
-
-        // DEBUG: Log post type registration
-        error_log('===== WEDYARA DEBUG: Wedding Package Post Type Registered =====');
     }
 
     /**

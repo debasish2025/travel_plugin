@@ -15,11 +15,6 @@ define('STP_VERSION', '1.0.0');
 define('STP_PATH', plugin_dir_path(__FILE__));
 define('STP_URL', plugin_dir_url(__FILE__));
 
-error_log('===== WEDYARA DEBUG: Plugin Loaded =====');
-error_log('Plugin: Wedyara - Travel & Wedding Packages');
-error_log('Version: ' . STP_VERSION);
-error_log('Path: ' . STP_PATH);
-
 class Simple_Travel_Plugin {
     
     public function __construct() {
@@ -54,19 +49,32 @@ class Simple_Travel_Plugin {
 
     /**
      * Register Wedyara Parent Menu
+     * We rename Travel Packages menu to "Wedyara" and add Wedding Packages as submenu
      */
     public function register_parent_menu() {
-        add_menu_page(
-            'Wedyara',                    // Page title
-            'Wedyara',                    // Menu title
-            'manage_options',             // Capability
-            'wedyara',                    // Menu slug
-            '',                           // Function (empty, handled by submenu)
-            'dashicons-heart',            // Icon
-            20                            // Position
-        );
+        global $menu, $submenu;
 
-        error_log('===== WEDYARA DEBUG: Parent Menu Registered =====');
+        // Rename Travel Packages menu to "Wedyara"
+        $travel_menu_slug = 'edit.php?post_type=travel_package';
+
+        // Find and rename the travel package menu
+        foreach ($menu as $key => $item) {
+            if ($item[2] === $travel_menu_slug) {
+                $menu[$key][0] = 'Wedyara';  // Change menu title
+                $menu[$key][6] = 'dashicons-heart';  // Change icon
+                break;
+            }
+        }
+
+        // Rename the submenu item from "Travel Packages" to "Travel Packages"
+        if (isset($submenu[$travel_menu_slug])) {
+            foreach ($submenu[$travel_menu_slug] as $key => $item) {
+                if ($item[2] === $travel_menu_slug) {
+                    $submenu[$travel_menu_slug][$key][0] = 'Travel Packages';
+                    break;
+                }
+            }
+        }
     }
     
     public function load_includes() {
@@ -98,13 +106,10 @@ class Simple_Travel_Plugin {
             'has_archive' => true,
             'supports' => array('title', 'editor', 'thumbnail', 'elementor'),
             'menu_icon' => 'dashicons-palmtree',
-            'show_in_menu' => 'wedyara',  // Show under Wedyara parent menu
             'show_in_rest' => true,
             'rewrite' => array('slug' => 'package'),
             'taxonomies' => array('package_category'), // Keep for backward compatibility
         ));
-
-        error_log('===== WEDYARA DEBUG: Travel Package Post Type Registered Under Wedyara Menu =====');
         
         /* 
          * OLD SIMPLE CATEGORY REGISTRATION - COMMENTED OUT
@@ -378,10 +383,6 @@ class Simple_Travel_Plugin {
         $widgets_manager->register(new \Elementor_Destination_Grid_Widget());
         $widgets_manager->register(new \Elementor_Destination_Carousel_Widget());
         $widgets_manager->register(new \Elementor_Fullwidth_Slider_Widget());
-
-        error_log('===== WEDYARA DEBUG: Unified Widgets Registered =====');
-        error_log('3 widgets registered: Package Grid, Package Carousel, Package Slider');
-        error_log('Each widget supports both Travel and Wedding packages via Package Type selector');
     }
     
     public function enqueue_styles() {
