@@ -1,10 +1,12 @@
 <?php
 /**
- * Plugin Name: Simple Travel & Wedding Packages
- * Description: Simple plugin for travel packages with Excel import and Elementor widgets
+ * Plugin Name: Wedyara - Travel & Wedding Packages
+ * Description: Complete package management system for travel and wedding services with Elementor widgets, CSV import, and advanced features
  * Version: 1.0.0
- * Author: Ab Connectz
+ * Author: Wedyara Team
+ * Author URI: https://wedyara.com
  * Requires Plugins: elementor
+ * Text Domain: wedyara
  */
 
 if (!defined('ABSPATH')) exit;
@@ -12,6 +14,11 @@ if (!defined('ABSPATH')) exit;
 define('STP_VERSION', '1.0.0');
 define('STP_PATH', plugin_dir_path(__FILE__));
 define('STP_URL', plugin_dir_url(__FILE__));
+
+error_log('===== WEDYARA DEBUG: Plugin Loaded =====');
+error_log('Plugin: Wedyara - Travel & Wedding Packages');
+error_log('Version: ' . STP_VERSION);
+error_log('Path: ' . STP_PATH);
 
 class Simple_Travel_Plugin {
     
