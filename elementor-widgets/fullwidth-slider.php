@@ -552,25 +552,24 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
             'post_status' => 'publish',
         );
 
-        // Category filter - simple and reliable
-        if (isset($settings['categories']) && is_array($settings['categories'])) {
-            $valid_cats = array();
-            foreach ($settings['categories'] as $cat) {
-                if (!empty($cat) && is_numeric($cat)) {
-                    $valid_cats[] = intval($cat);
-                }
-            }
+        // Category filter - SIMPLE AND WORKING
+        $selected_categories = isset($settings['categories']) ? $settings['categories'] : array();
 
-            if (!empty($valid_cats)) {
-                $args['tax_query'] = array(
-                    array(
-                        'taxonomy' => 'package_category',
-                        'field' => 'term_id',
-                        'terms' => $valid_cats,
-                        'operator' => 'IN',
-                    )
-                );
-            }
+        // Remove empty values
+        if (is_array($selected_categories)) {
+            $selected_categories = array_filter($selected_categories);
+        }
+
+        // Apply filter if categories are selected
+        if (!empty($selected_categories)) {
+            $args['tax_query'] = array(
+                array(
+                    'taxonomy' => 'package_category',
+                    'field' => 'term_id',
+                    'terms' => $selected_categories,
+                    'operator' => 'IN',
+                )
+            );
         }
 
         $query = new WP_Query($args);
