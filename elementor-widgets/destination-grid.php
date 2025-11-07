@@ -867,18 +867,27 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
             'posts_per_page' => $settings['posts_per_page'],
             'orderby' => $settings['orderby'],
             'order' => $settings['order'],
+            'post_status' => 'publish',
         );
 
-        // Handle category filtering with multiple selection
-        if (!empty($settings['categories']) && $settings['categories'][0] !== '') {
-            $args['tax_query'] = array(
-                array(
-                    'taxonomy' => 'package_category',
-                    'field' => 'term_id',
-                    'terms' => $settings['categories'],
-                    'operator' => 'IN',
-                )
-            );
+        // FIXED: Proper category filter handling
+        // Check if categories is an array with actual values
+        if (isset($settings['categories']) && is_array($settings['categories']) && !empty($settings['categories'])) {
+            // Filter out empty strings and ensure we have valid term IDs
+            $valid_categories = array_filter($settings['categories'], function($cat) {
+                return !empty($cat) && is_numeric($cat);
+            });
+
+            if (!empty($valid_categories)) {
+                $args['tax_query'] = array(
+                    array(
+                        'taxonomy' => 'package_category',
+                        'field' => 'term_id',
+                        'terms' => $valid_categories,
+                        'operator' => 'IN',
+                    )
+                );
+            }
         }
 
         $query = new WP_Query($args);

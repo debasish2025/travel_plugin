@@ -665,16 +665,24 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
             'post_status' => 'publish',
         );
 
-        // Multiple category filter
-        if (!empty($settings['categories']) && $settings['categories'][0] !== '') {
-            $args['tax_query'] = array(
-                array(
-                    'taxonomy' => 'package_category',
-                    'field' => 'term_id',
-                    'terms' => $settings['categories'],
-                    'operator' => 'IN',
-                )
-            );
+        // FIXED: Proper category filter handling
+        // Check if categories is an array with actual values
+        if (isset($settings['categories']) && is_array($settings['categories']) && !empty($settings['categories'])) {
+            // Filter out empty strings and ensure we have valid term IDs
+            $valid_categories = array_filter($settings['categories'], function($cat) {
+                return !empty($cat) && is_numeric($cat);
+            });
+
+            if (!empty($valid_categories)) {
+                $args['tax_query'] = array(
+                    array(
+                        'taxonomy' => 'package_category',
+                        'field' => 'term_id',
+                        'terms' => $valid_categories,
+                        'operator' => 'IN',
+                    )
+                );
+            }
         }
 
         $query = new WP_Query($args);
@@ -749,12 +757,17 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
 
                         new Swiper('.<?php echo esc_js($carousel_id); ?>', {
                             slidesPerView: 1,
+                            slidesPerGroup: 1,
                             spaceBetween: 20,
                             loop: false,
+                            watchOverflow: true,
+                            observer: true,
+                            observeParents: true,
                             <?php if ($settings['autoplay'] === 'yes'): ?>
                             autoplay: {
                                 delay: <?php echo intval($settings['autoplay_speed']); ?>,
                                 disableOnInteraction: false,
+                                pauseOnMouseEnter: true,
                             },
                             <?php endif; ?>
                             <?php if ($settings['show_dots'] === 'yes'): ?>
@@ -773,14 +786,17 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
                             breakpoints: {
                                 640: {
                                     slidesPerView: <?php echo intval($settings['slides_to_show_mobile']); ?>,
+                                    slidesPerGroup: 1,
                                     spaceBetween: 20,
                                 },
                                 992: {
                                     slidesPerView: <?php echo intval($settings['slides_to_show_tablet']); ?>,
+                                    slidesPerGroup: 1,
                                     spaceBetween: 25,
                                 },
                                 1200: {
                                     slidesPerView: <?php echo intval($settings['slides_to_show_desktop']); ?>,
+                                    slidesPerGroup: 1,
                                     spaceBetween: 30,
                                 }
                             }
@@ -789,6 +805,19 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
                 }, 100);
             })();
             </script>
+
+            <style>
+            /* FIXED: Ensure all carousel items have identical width based on slides to show */
+            .<?php echo esc_attr($carousel_id); ?> .swiper-slide {
+                width: auto !important;
+                flex-shrink: 0;
+            }
+
+            .<?php echo esc_attr($carousel_id); ?> .wedyara-carousel-card {
+                width: 100%;
+                max-width: none;
+            }
+            </style>
             <?php
         else:
             echo '<p>No packages found.</p>';

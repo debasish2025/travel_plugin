@@ -545,18 +545,27 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
             'posts_per_page' => $settings['posts_per_page'],
             'orderby' => $settings['orderby'],
             'order' => $settings['order'],
+            'post_status' => 'publish',
         );
 
-        // Handle category filtering with multiple selection
-        if (!empty($settings['categories']) && $settings['categories'][0] !== '') {
-            $args['tax_query'] = array(
-                array(
-                    'taxonomy' => 'package_category',
-                    'field' => 'term_id',
-                    'terms' => $settings['categories'],
-                    'operator' => 'IN',
-                )
-            );
+        // FIXED: Proper category filter handling
+        // Check if categories is an array with actual values
+        if (isset($settings['categories']) && is_array($settings['categories']) && !empty($settings['categories'])) {
+            // Filter out empty strings and ensure we have valid term IDs
+            $valid_categories = array_filter($settings['categories'], function($cat) {
+                return !empty($cat) && is_numeric($cat);
+            });
+
+            if (!empty($valid_categories)) {
+                $args['tax_query'] = array(
+                    array(
+                        'taxonomy' => 'package_category',
+                        'field' => 'term_id',
+                        'terms' => $valid_categories,
+                        'operator' => 'IN',
+                    )
+                );
+            }
         }
 
         $query = new WP_Query($args);
@@ -626,12 +635,17 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
 
                         new Swiper('.<?php echo esc_js($slider_id); ?>', {
                             slidesPerView: 1,
+                            slidesPerGroup: 1,
                             spaceBetween: 20,
                             loop: false,
+                            watchOverflow: true,
+                            observer: true,
+                            observeParents: true,
                             <?php if ($settings['autoplay'] === 'yes'): ?>
                             autoplay: {
                                 delay: <?php echo intval($settings['autoplay_speed']); ?>,
                                 disableOnInteraction: false,
+                                pauseOnMouseEnter: true,
                             },
                             <?php endif; ?>
                             <?php if ($settings['show_dots'] === 'yes'): ?>
@@ -650,14 +664,17 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
                             breakpoints: {
                                 640: {
                                     slidesPerView: <?php echo intval($settings['slides_to_show_mobile'] ?? 2); ?>,
+                                    slidesPerGroup: 1,
                                     spaceBetween: 15,
                                 },
                                 992: {
                                     slidesPerView: <?php echo intval($settings['slides_to_show_tablet'] ?? 3); ?>,
+                                    slidesPerGroup: 1,
                                     spaceBetween: 20,
                                 },
                                 1200: {
                                     slidesPerView: <?php echo intval($settings['slides_to_show']); ?>,
+                                    slidesPerGroup: 1,
                                     spaceBetween: 25,
                                 }
                             }
@@ -668,6 +685,12 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
             </script>
 
             <style>
+            /* FIXED: Ensure all slider items have identical width based on slides to show */
+            .<?php echo esc_attr($slider_id); ?> .swiper-slide {
+                width: auto !important;
+                flex-shrink: 0;
+            }
+
             /* Hover Effects for Fullwidth Slider */
             .wedyara-fullwidth-image {
                 transition: background-size 0.4s ease;
