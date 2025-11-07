@@ -584,14 +584,19 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
         $categories = get_terms(array(
             'taxonomy' => 'package_category',
             'hide_empty' => false,
+            'orderby' => 'name',
+            'order' => 'ASC',
         ));
 
         $options = array();
 
         if (!is_wp_error($categories) && !empty($categories)) {
             foreach ($categories as $cat) {
-                $options[$cat->slug] = $cat->name;
+                $options[$cat->term_id] = $cat->name;
             }
+        } else {
+            // If no categories exist, show a helpful message
+            $options = array('' => 'No categories found - Please create categories first');
         }
 
         return $options;
@@ -613,11 +618,11 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
         );
 
         // Multiple category filter
-        if (!empty($settings['categories'])) {
+        if (!empty($settings['categories']) && $settings['categories'][0] !== '') {
             $args['tax_query'] = array(
                 array(
                     'taxonomy' => 'package_category',
-                    'field' => 'slug',
+                    'field' => 'term_id',
                     'terms' => $settings['categories'],
                     'operator' => 'IN',
                 )
