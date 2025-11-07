@@ -794,6 +794,7 @@ function stp_save_enhanced_itinerary($post_id, $post) {
 add_action('add_meta_boxes', 'stp_add_feature_visibility_metabox', 25);
 
 function stp_add_feature_visibility_metabox() {
+    // Add to Travel Packages
     add_meta_box(
         'package_feature_visibility',
         '⚙️ Frontend Display Settings',
@@ -802,20 +803,30 @@ function stp_add_feature_visibility_metabox() {
         'side',
         'default'
     );
+
+    // Add to Wedding Packages
+    add_meta_box(
+        'package_feature_visibility',
+        '⚙️ Frontend Display Settings',
+        'stp_render_feature_visibility',
+        'wedding_package',
+        'side',
+        'default'
+    );
 }
 
 function stp_render_feature_visibility($post) {
     wp_nonce_field('package_feature_visibility_nonce', 'package_feature_visibility_nonce');
 
-    // Get current settings (default all to checked)
-    $show_reason = get_post_meta($post->ID, '_show_reason', true) !== '0';
-    $show_duration = get_post_meta($post->ID, '_show_duration', true) !== '0';
-    $show_season = get_post_meta($post->ID, '_show_season', true) !== '0';
-    $show_difficulty = get_post_meta($post->ID, '_show_difficulty', true) !== '0';
-    $show_label = get_post_meta($post->ID, '_show_label', true) !== '0';
-    $show_package_types = get_post_meta($post->ID, '_show_package_types', true) !== '0';
-    $show_activity_types = get_post_meta($post->ID, '_show_activity_types', true) !== '0';
-    $show_amenities = get_post_meta($post->ID, '_show_amenities', true) !== '0';
+    // Get current settings (default all to UNCHECKED - features hidden until selected)
+    $show_reason = get_post_meta($post->ID, '_show_reason', true) === '1';
+    $show_duration = get_post_meta($post->ID, '_show_duration', true) === '1';
+    $show_season = get_post_meta($post->ID, '_show_season', true) === '1';
+    $show_difficulty = get_post_meta($post->ID, '_show_difficulty', true) === '1';
+    $show_label = get_post_meta($post->ID, '_show_label', true) === '1';
+    $show_package_types = get_post_meta($post->ID, '_show_package_types', true) === '1';
+    $show_activity_types = get_post_meta($post->ID, '_show_activity_types', true) === '1';
+    $show_amenities = get_post_meta($post->ID, '_show_amenities', true) === '1';
 
     ?>
     <div class="stp-visibility-controls">

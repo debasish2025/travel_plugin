@@ -276,12 +276,12 @@ class WP_Wedding_Packages {
 
     /**
      * Load Custom Single Template for Wedding Packages
-     * Uses same template as travel packages for now
+     * Ultra-modern corporate wedding theme
      */
     public function load_single_template($template) {
         if (is_singular('wedding_package')) {
-            // Use travel package template for now
-            $custom_template = plugin_dir_path(dirname(__FILE__)) . 'templates/single-travel-package.php';
+            // Use custom wedding template
+            $custom_template = plugin_dir_path(dirname(__FILE__)) . 'templates/single-wedding-package.php';
 
             if (file_exists($custom_template)) {
                 return $custom_template;
