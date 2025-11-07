@@ -267,6 +267,24 @@ class Elementor_Selected_Packages_Carousel_Widget extends \Elementor\Widget_Base
             ]
         );
 
+        $this->add_control(
+            'card_padding',
+            [
+                'label' => 'Card Content Padding',
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'default' => [
+                    'top' => 20,
+                    'right' => 15,
+                    'bottom' => 20,
+                    'left' => 15,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .wedyara-selected-carousel-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
 
         // ============ STYLE: IMAGE ============
@@ -288,8 +306,27 @@ class Elementor_Selected_Packages_Carousel_Widget extends \Elementor\Widget_Base
                     'px' => ['min' => 150, 'max' => 500],
                 ],
                 'default' => ['size' => 250, 'unit' => 'px'],
+                'tablet_default' => ['size' => 220, 'unit' => 'px'],
+                'mobile_default' => ['size' => 200, 'unit' => 'px'],
                 'selectors' => [
                     '{{WRAPPER}} .wedyara-selected-carousel-image' => 'height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'image_object_fit',
+            [
+                'label' => 'Image Fit',
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    'cover' => 'Cover',
+                    'contain' => 'Contain',
+                    'fill' => 'Fill',
+                ],
+                'default' => 'cover',
+                'selectors' => [
+                    '{{WRAPPER}} .wedyara-selected-carousel-image' => 'background-size: {{VALUE}};',
                 ],
             ]
         );
@@ -322,6 +359,167 @@ class Elementor_Selected_Packages_Carousel_Widget extends \Elementor\Widget_Base
             [
                 'name' => 'title_typography',
                 'selector' => '{{WRAPPER}} .wedyara-selected-carousel-title',
+            ]
+        );
+
+        $this->add_control(
+            'title_alignment',
+            [
+                'label' => 'Alignment',
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'left' => ['title' => 'Left', 'icon' => 'eicon-text-align-left'],
+                    'center' => ['title' => 'Center', 'icon' => 'eicon-text-align-center'],
+                    'right' => ['title' => 'Right', 'icon' => 'eicon-text-align-right'],
+                ],
+                'default' => 'left',
+                'selectors' => [
+                    '{{WRAPPER}} .wedyara-selected-carousel-title' => 'text-align: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'title_spacing',
+            [
+                'label' => 'Bottom Spacing',
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 50]],
+                'default' => ['size' => 10, 'unit' => 'px'],
+                'selectors' => [
+                    '{{WRAPPER}} .wedyara-selected-carousel-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // ============ STYLE: SUBTITLE ============
+        $this->start_controls_section(
+            'style_subtitle',
+            [
+                'label' => 'Subtitle Style',
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => ['show_subtitle' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'subtitle_color',
+            [
+                'label' => 'Color',
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#666666',
+                'selectors' => [
+                    '{{WRAPPER}} .wedyara-selected-carousel-subtitle' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'subtitle_typography',
+                'selector' => '{{WRAPPER}} .wedyara-selected-carousel-subtitle',
+            ]
+        );
+
+        $this->add_control(
+            'subtitle_alignment',
+            [
+                'label' => 'Alignment',
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'left' => ['title' => 'Left', 'icon' => 'eicon-text-align-left'],
+                    'center' => ['title' => 'Center', 'icon' => 'eicon-text-align-center'],
+                    'right' => ['title' => 'Right', 'icon' => 'eicon-text-align-right'],
+                ],
+                'default' => 'left',
+                'selectors' => [
+                    '{{WRAPPER}} .wedyara-selected-carousel-subtitle' => 'text-align: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // ============ STYLE: DURATION ============
+        $this->start_controls_section(
+            'style_duration',
+            [
+                'label' => 'Duration Style',
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => ['show_duration' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'duration_color',
+            [
+                'label' => 'Color',
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#888888',
+                'selectors' => [
+                    '{{WRAPPER}} .wedyara-selected-carousel-duration' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'duration_typography',
+                'selector' => '{{WRAPPER}} .wedyara-selected-carousel-duration',
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // ============ STYLE: PRICE ============
+        $this->start_controls_section(
+            'style_price',
+            [
+                'label' => 'Price Style',
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => ['show_price' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'price_color',
+            [
+                'label' => 'Color',
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#667eea',
+                'selectors' => [
+                    '{{WRAPPER}} .wedyara-selected-carousel-price' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'price_typography',
+                'selector' => '{{WRAPPER}} .wedyara-selected-carousel-price',
+            ]
+        );
+
+        $this->add_control(
+            'price_alignment',
+            [
+                'label' => 'Alignment',
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'left' => ['title' => 'Left', 'icon' => 'eicon-text-align-left'],
+                    'center' => ['title' => 'Center', 'icon' => 'eicon-text-align-center'],
+                    'right' => ['title' => 'Right', 'icon' => 'eicon-text-align-right'],
+                ],
+                'default' => 'left',
+                'selectors' => [
+                    '{{WRAPPER}} .wedyara-selected-carousel-price' => 'text-align: {{VALUE}};',
+                ],
             ]
         );
 
@@ -445,22 +643,22 @@ class Elementor_Selected_Packages_Carousel_Widget extends \Elementor\Widget_Base
                                     }
                                 ?>'); background-size: cover; background-position: center;">
                                 </div>
-                                <div class="wedyara-selected-carousel-content" style="padding: 20px 15px;">
-                                    <h3 class="wedyara-selected-carousel-title" style="margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">
+                                <div class="wedyara-selected-carousel-content">
+                                    <h3 class="wedyara-selected-carousel-title">
                                         <?php the_title(); ?>
                                     </h3>
                                     <?php if ($settings['show_subtitle'] === 'yes' && $subtitle) : ?>
-                                        <p class="wedyara-selected-carousel-subtitle" style="margin: 0 0 8px 0; color: #666; font-size: 14px;">
+                                        <p class="wedyara-selected-carousel-subtitle">
                                             <?php echo esc_html($subtitle); ?>
                                         </p>
                                     <?php endif; ?>
                                     <?php if ($settings['show_duration'] === 'yes' && $days && $nights): ?>
-                                        <p class="wedyara-selected-carousel-duration" style="margin: 0 0 10px 0; color: #888; font-size: 14px;">
+                                        <p class="wedyara-selected-carousel-duration">
                                             <?php echo esc_html($days . ' Days / ' . $nights . ' Nights'); ?>
                                         </p>
                                     <?php endif; ?>
                                     <?php if ($settings['show_price'] === 'yes' && $price): ?>
-                                        <p class="wedyara-selected-carousel-price" style="margin: 0; color: #667eea; font-size: 20px; font-weight: 600;">
+                                        <p class="wedyara-selected-carousel-price">
                                             From $<?php echo esc_html($price); ?>
                                         </p>
                                     <?php endif; ?>
@@ -540,6 +738,31 @@ class Elementor_Selected_Packages_Carousel_Widget extends \Elementor\Widget_Base
         }
         .<?php echo esc_attr($carousel_id); ?> .wedyara-selected-carousel-card:hover {
             transform: translateY(-5px);
+        }
+        .<?php echo esc_attr($carousel_id); ?> .wedyara-selected-carousel-content {
+            padding: 20px 15px;
+        }
+        .<?php echo esc_attr($carousel_id); ?> .wedyara-selected-carousel-title {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .<?php echo esc_attr($carousel_id); ?> .wedyara-selected-carousel-subtitle {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .<?php echo esc_attr($carousel_id); ?> .wedyara-selected-carousel-duration {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .<?php echo esc_attr($carousel_id); ?> .wedyara-selected-carousel-price {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.3;
         }
         .swiper-button-prev, .swiper-button-next {
             width: 50px;
