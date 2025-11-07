@@ -49,47 +49,106 @@ class Simple_Travel_Plugin {
 
     /**
      * Register Wedyara Parent Menu
-     * We rename Travel Packages menu to "Wedyara" and add Wedding Packages as submenu
+     * Creates proper hierarchy: Wedyara (parent) > Travel Packages, Wedding Packages (children)
      */
     public function register_parent_menu() {
         global $menu, $submenu;
 
-        // Rename Travel Packages menu to "Wedyara"
         $travel_menu_slug = 'edit.php?post_type=travel_package';
 
-        // Find and rename the travel package menu
+        // Find and rename the travel package menu to "Wedyara"
         foreach ($menu as $key => $item) {
             if ($item[2] === $travel_menu_slug) {
-                $menu[$key][0] = 'Wedyara';  // Change menu title
+                $menu[$key][0] = 'Wedyara';  // Change title
                 $menu[$key][6] = 'dashicons-heart';  // Change icon
                 break;
             }
         }
 
-        // Rename the submenu item from "Travel Packages" to "Travel Packages"
+        // Ensure proper submenu structure with visual indentation
         if (isset($submenu[$travel_menu_slug])) {
+            // Rename first submenu to "Travel Packages"
             foreach ($submenu[$travel_menu_slug] as $key => $item) {
                 if ($item[2] === $travel_menu_slug) {
-                    $submenu[$travel_menu_slug][$key][0] = 'Travel Packages';
+                    $submenu[$travel_menu_slug][$key][0] = '&nbsp;&nbsp;📦 Travel Packages';
+                    break;
+                }
+            }
+
+            // Add visual styling for Wedding Packages submenu
+            foreach ($submenu[$travel_menu_slug] as $key => $item) {
+                if (strpos($item[2], 'wedding_package') !== false) {
+                    $submenu[$travel_menu_slug][$key][0] = '&nbsp;&nbsp;💒 Wedding Packages';
                     break;
                 }
             }
         }
+
+        // Add custom CSS for better visual hierarchy
+        add_action('admin_head', array($this, 'add_menu_styles'));
+
+        error_log('WEDYARA: Menu hierarchy configured');
+    }
+
+    /**
+     * Add custom CSS for menu styling
+     */
+    public function add_menu_styles() {
+        ?>
+        <style>
+            /* Wedyara Menu Styling */
+            #adminmenu .menu-icon-travel_package .wp-menu-name {
+                font-weight: 600;
+            }
+            #adminmenu .menu-icon-travel_package .wp-submenu li a {
+                padding-left: 20px;
+            }
+            #adminmenu .menu-icon-travel_package .wp-submenu li a:before {
+                content: '└─ ';
+                opacity: 0.5;
+                margin-right: 5px;
+            }
+        </style>
+        <?php
     }
     
     public function load_includes() {
+        error_log('WEDYARA: Loading plugin modules...');
+
         // Load comprehensive taxonomies system
         require_once STP_PATH . 'includes/class-tpm-taxonomies.php';
+        error_log('WEDYARA: Taxonomies module loaded');
+
         require_once STP_PATH . 'includes/class-tpm-default-terms.php';
+        error_log('WEDYARA: Default terms module loaded');
+
         require_once STP_PATH . 'includes/csv-import-fixed.php';
-        require_once STP_PATH . 'includes/csv-import.php'; // New powerful CSV importer with HTML support
+        require_once STP_PATH . 'includes/csv-import.php';
+        error_log('WEDYARA: CSV import modules loaded');
+
         require_once STP_PATH . 'includes/enhanced-meta-boxes.php';
+        error_log('WEDYARA: Enhanced meta boxes loaded');
+
         require_once STP_PATH . 'includes/whatsapp-social-related.php';
-        require_once STP_PATH . 'includes/quick-image-upload.php'; // Quick image upload from list page
+        error_log('WEDYARA: WhatsApp/Social module loaded');
+
+        require_once STP_PATH . 'includes/quick-image-upload.php';
+        error_log('WEDYARA: Quick image upload module loaded');
 
         // Load Wedding Packages System
         require_once STP_PATH . 'includes/class-wedding-packages.php';
-        require_once STP_PATH . 'includes/wedding-csv-import.php'; // CSV importer for wedding packages
+        require_once STP_PATH . 'includes/wedding-csv-import.php';
+        error_log('WEDYARA: Wedding packages system loaded');
+
+        // Load Admin Filters
+        require_once STP_PATH . 'includes/admin-filters.php';
+        error_log('WEDYARA: Admin filters loaded');
+
+        // Load Quick Edit Enhancements
+        require_once STP_PATH . 'includes/quick-edit-enhancements.php';
+        error_log('WEDYARA: Quick Edit enhancements loaded');
+
+        error_log('WEDYARA: All modules loaded successfully');
     }
     
     public function register_post_type() {
