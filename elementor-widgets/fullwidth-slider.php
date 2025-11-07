@@ -46,6 +46,10 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
                 'options' => $this->get_package_categories(),
                 'default' => [],
                 'label_block' => true,
+                'select2options' => [
+                    'placeholder' => 'Select categories...',
+                    'allowClear' => true,
+                ],
                 'description' => 'Select one or more categories. Leave empty to show all packages.',
             ]
         );
@@ -686,10 +690,19 @@ class Elementor_Fullwidth_Slider_Widget extends \Elementor\Widget_Base {
             </script>
 
             <style>
-            /* FIXED: Ensure all slider items have identical width based on slides to show */
+            /* Allow Swiper to calculate widths automatically based on slidesPerView */
             .<?php echo esc_attr($slider_id); ?> .swiper-slide {
-                width: auto !important;
-                flex-shrink: 0;
+                height: auto;
+            }
+
+            /* Ensure Swiper wrapper and container are full width */
+            .<?php echo esc_attr($slider_id); ?> {
+                width: 100%;
+            }
+
+            .<?php echo esc_attr($slider_id); ?> .swiper-wrapper {
+                display: flex;
+                align-items: stretch;
             }
 
             /* Hover Effects for Fullwidth Slider */

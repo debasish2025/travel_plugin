@@ -35,7 +35,7 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
             ]
         );
 
-        // Multiple Category Selection
+        // Multiple Category Selection with search
         $this->add_control(
             'categories',
             [
@@ -45,6 +45,10 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
                 'options' => $this->get_package_categories(),
                 'default' => [],
                 'label_block' => true,
+                'select2options' => [
+                    'placeholder' => 'Select categories...',
+                    'allowClear' => true,
+                ],
                 'description' => 'Select one or more categories. Leave empty to show all packages.',
             ]
         );
@@ -808,15 +812,26 @@ class Elementor_Destination_Carousel_Widget extends \Elementor\Widget_Base {
             </script>
 
             <style>
-            /* FIXED: Ensure all carousel items have identical width based on slides to show */
+            /* Allow Swiper to calculate widths automatically based on slidesPerView */
             .<?php echo esc_attr($carousel_id); ?> .swiper-slide {
-                width: auto !important;
-                flex-shrink: 0;
+                height: auto;
             }
 
             .<?php echo esc_attr($carousel_id); ?> .wedyara-carousel-card {
                 width: 100%;
-                max-width: none;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Ensure Swiper wrapper and container are full width */
+            .<?php echo esc_attr($carousel_id); ?> {
+                width: 100%;
+            }
+
+            .<?php echo esc_attr($carousel_id); ?> .swiper-wrapper {
+                display: flex;
+                align-items: stretch;
             }
             </style>
             <?php

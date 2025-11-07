@@ -78,6 +78,10 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
                 'options' => $this->get_package_categories(),
                 'default' => [],
                 'label_block' => true,
+                'select2options' => [
+                    'placeholder' => 'Select categories...',
+                    'allowClear' => true,
+                ],
                 'description' => 'Select one or more categories. Leave empty to show all packages.',
             ]
         );
