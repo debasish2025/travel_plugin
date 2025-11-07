@@ -10,11 +10,22 @@
 add_action('add_meta_boxes', 'stp_add_enhanced_itinerary_metabox', 20);
 
 function stp_add_enhanced_itinerary_metabox() {
+    // Add to Travel Packages
     add_meta_box(
         'package_itinerary_enhanced',
         '📅 Day by Day Itinerary',
         'stp_render_enhanced_itinerary',
         'travel_package',
+        'normal',
+        'high'
+    );
+
+    // Add to Wedding Packages
+    add_meta_box(
+        'package_itinerary_enhanced',
+        '📅 Day by Day Itinerary',
+        'stp_render_enhanced_itinerary',
+        'wedding_package',
         'normal',
         'high'
     );
@@ -25,7 +36,7 @@ add_action('admin_enqueue_scripts', 'stp_enqueue_admin_assets');
 
 function stp_enqueue_admin_assets($hook) {
     global $post_type;
-    if ('travel_package' !== $post_type || !in_array($hook, ['post.php', 'post-new.php'])) {
+    if (!in_array($post_type, ['travel_package', 'wedding_package']) || !in_array($hook, ['post.php', 'post-new.php'])) {
         return;
     }
 

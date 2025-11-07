@@ -51,6 +51,10 @@ class Simple_Travel_Plugin {
         require_once STP_PATH . 'includes/enhanced-meta-boxes.php';
         require_once STP_PATH . 'includes/whatsapp-social-related.php';
         require_once STP_PATH . 'includes/quick-image-upload.php'; // Quick image upload from list page
+
+        // Load Wedding Packages System
+        require_once STP_PATH . 'includes/class-wedding-packages.php';
+        require_once STP_PATH . 'includes/wedding-csv-import.php'; // CSV importer for wedding packages
     }
     
     public function register_post_type() {
@@ -335,20 +339,30 @@ class Simple_Travel_Plugin {
     }
     
     public function register_elementor_widgets($widgets_manager) {
+        // Travel Package Widgets
         require_once STP_PATH . 'elementor-widgets/destination-grid.php';
         require_once STP_PATH . 'elementor-widgets/destination-carousel.php';
         require_once STP_PATH . 'elementor-widgets/fullwidth-slider.php';
-        
+
         $widgets_manager->register(new \Elementor_Destination_Grid_Widget());
         $widgets_manager->register(new \Elementor_Destination_Carousel_Widget());
         $widgets_manager->register(new \Elementor_Fullwidth_Slider_Widget());
+
+        // Wedding Package Widgets
+        require_once STP_PATH . 'elementor-widgets/wedding-carousel.php';
+        require_once STP_PATH . 'elementor-widgets/wedding-grid.php';
+        require_once STP_PATH . 'elementor-widgets/wedding-slider.php';
+
+        $widgets_manager->register(new \Elementor_Wedding_Carousel_Widget());
+        $widgets_manager->register(new \Elementor_Wedding_Grid_Widget());
+        $widgets_manager->register(new \Elementor_Wedding_Slider_Widget());
     }
     
     public function enqueue_styles() {
         wp_enqueue_style('stp-styles', STP_URL . 'assets/css/styles.css', array(), STP_VERSION);
 
-        // Enqueue GSAP for animations on single package pages
-        if (is_singular('travel_package')) {
+        // Enqueue GSAP for animations on single package pages (both travel and wedding)
+        if (is_singular('travel_package') || is_singular('wedding_package')) {
             wp_enqueue_script('gsap', 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', array(), '3.12.5', true);
             wp_enqueue_script('gsap-scrolltrigger', 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', array('gsap'), '3.12.5', true);
             wp_enqueue_script('stp-animations', STP_URL . 'assets/js/animations.js', array('jquery', 'gsap', 'gsap-scrolltrigger'), STP_VERSION, true);
