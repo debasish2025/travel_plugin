@@ -799,7 +799,7 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
 
     private function get_package_categories() {
         $categories = get_terms(array(
-            'taxonomy' => 'package_category',
+            'taxonomy' => 'tpm_category',
             'hide_empty' => false,
         ));
 
@@ -855,7 +855,7 @@ class Elementor_Destination_Grid_Widget extends \Elementor\Widget_Base {
             error_log('APPLYING CATEGORY FILTER with terms: ' . print_r($selected_categories, true));
             $args['tax_query'] = array(
                 array(
-                    'taxonomy' => 'package_category',
+                    'taxonomy' => 'tpm_category',
                     'field' => 'term_id',
                     'terms' => $selected_categories,
                     'operator' => 'IN',
